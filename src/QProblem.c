@@ -45,6 +45,98 @@ BEGIN_NAMESPACE_QPOASES
  *  P U B L I C                                                              *
  *****************************************************************************/
 
+int QProblem_calculateMemorySize( unsigned int nV, unsigned int nC )
+{
+	unsigned int nVC_min = (nV < nC) ? nV : nC;
+
+	int size = 0;
+	size += sizeof(QProblem);  					  	   // size of structure itself
+	size += Bounds_calculateMemorySize(nV);			   // bounds
+	size += Constraints_calculateMemorySize(nC);	   // constraints
+	size += Flipper_calculateMemorySize(nV, nC);       // flipper
+	size += DenseMatrix_calculateMemorySize(nV, nV);   // H
+	size += DenseMatrix_calculateMemorySize(nC, nV);   // A
+	size += 3 * nV * sizeof(real_t);				   // g, lb, ub
+	size += 2 * nC * sizeof(real_t);				   // lbA, ubA
+	size += 2 * (nV * nV) * sizeof(real_t);			   // R, Q
+	size += 1 * (nVC_min * nVC_min) * sizeof(real_t);  // T
+	size += 3 * nC * sizeof(real_t);				   // Ax, Ax_l, Ax_u
+	size += 1 * nV * sizeof(real_t);				   // x
+	size += 1 * (nV + nC) * sizeof(real_t);			   // y
+	size += 2 * nV * sizeof(real_t);				   // delta_xFR_TMP, tempA
+	size += 2 * nV * sizeof(real_t);				   // ZFR_delta_xFRz, delta_xFRz
+	size += 3 * nC * sizeof(real_t);				   // tempB, delta_xFRy, delta_yAC_TMP
+
+	size = (size + 63) / 64 * 64;  // make multiple of typical cache line size
+	size += 1 * 64;                // align once to typical cache line size
+
+	return size;
+}
+
+char *QProblem_assignMemory( unsigned int nV, unsigned int nC, QProblem **mem, void *raw_memory )
+{
+	unsigned int nVC_min = (nV < nC) ? nV : nC;
+
+	// char pointer
+	char *c_ptr = (char *)raw_memory;
+
+	// assign structures
+	*mem = (QProblem *) c_ptr;
+	c_ptr += sizeof(QProblem);
+
+	(*mem)->bounds = (Bounds *) c_ptr;
+	c_ptr += sizeof(Bounds);
+
+	(*mem)->constraints = (Constraints *) c_ptr;
+	c_ptr += sizeof(Constraints);
+
+	(*mem)->flipper = (Flipper *) c_ptr;
+	c_ptr += sizeof(Flipper);
+
+	(*mem)->H = (DenseMatrix *) c_ptr;
+	c_ptr += sizeof(DenseMatrix);
+
+	(*mem)->A = (DenseMatrix *) c_ptr;
+	c_ptr += sizeof(DenseMatrix);
+
+	// align memory to typical cache line size
+    size_t s_ptr = (size_t)c_ptr;
+    s_ptr = (s_ptr + 63) / 64 * 64;
+	c_ptr = (char *)s_ptr;
+
+	// assign data
+	Bounds *bounds = (*mem)->bounds;
+	c_ptr = Bounds_assignMemory(nV, &bounds, c_ptr);
+
+	Constraints *constraints = (*mem)->constraints;
+	c_ptr = Constraints_assignMemory(nC, &constraints, c_ptr);
+
+	Flipper *flipper = (*mem)->flipper;
+	c_ptr = Flipper_assignMemory(nV, nC, &flipper, c_ptr);
+
+	DenseMatrix *H = (*mem)->H;
+	c_ptr = DenseMatrix_assignMemory(nV, nV, &H, c_ptr);
+
+	DenseMatrix *A = (*mem)->A;
+	c_ptr = DenseMatrix_assignMemory(nC, nV, &A, c_ptr);
+
+	(*mem)->g = (real_t *) c_ptr;
+	c_ptr += nV * sizeof(real_t);
+
+	(*mem)->lb = (real_t *) c_ptr;
+	c_ptr += nV * sizeof(real_t);
+
+	(*mem)->ub = (real_t *) c_ptr;
+	c_ptr += nV * sizeof(real_t);
+
+	return c_ptr;
+}
+
+QProblem *QProblem_createMemory( unsigned int nV, unsigned int nC )
+{
+
+}
+
 /*
  *	Q P r o b l e m
  */
