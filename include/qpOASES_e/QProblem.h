@@ -66,6 +66,9 @@ typedef struct
 	Constraints *constraints;		/**< Data structure for problem's constraints. */
 	Flipper *flipper;				/**< Struct for making a temporary copy of the matrix factorisations. */
 
+	Bounds *auxiliaryBounds;
+	Constraints *auxiliaryConstraints;
+
 	DenseMatrix* H;					/**< Hessian matrix pointer. */
 	DenseMatrix* A;					/**< Constraint matrix pointer. */
 
@@ -102,6 +105,16 @@ typedef struct
 	real_t *delta_xFRz;				/**< Temporary for determineStepDirection. */
 	real_t *delta_yAC_TMP;			/**< Temporary for determineStepDirection. */
 
+	real_t *tmp_nv_1;
+	real_t *tmp_nv_2;
+	real_t *tmp_nv_3;
+	real_t *tmp_nc_1;
+	real_t *tmp_nc_2;
+	real_t *tmp_nc_3;
+	real_t *tmp_nv_nv;
+	real_t *tmp_nvc_max_1;
+	real_t *tmp_nvc_max_2;
+
 	ConstraintProduct constraintProduct;	/**< Pointer to user-defined constraint product function. */
 
 	real_t tau;						/**< Last homotopy step length. */
@@ -120,9 +133,6 @@ typedef struct
 	unsigned int count;				/**< Counts the number of hotstart function calls (internal usage only!). */
 
 	int sizeT;						/**< Matrix T is stored in a (sizeT x sizeT) array. */
-
-	int nC;							/**< Number of constraints. */
-	int nV;							/**< Number of variables. */
 } QProblem;
 
 int QProblem_calculateMemorySize( unsigned int nV, unsigned int nC );
@@ -1681,7 +1691,7 @@ static inline returnValue QProblem_getBounds( QProblem* _THIS, Bounds* _bounds )
 	if ( nV == 0 )
 		return THROWERROR( RET_QPOBJECT_NOT_SETUP );
 
-	*_bounds = _THIS->bounds;
+	_bounds = _THIS->bounds;
 
 	return SUCCESSFUL_RETURN;
 }
@@ -1692,7 +1702,7 @@ static inline returnValue QProblem_getBounds( QProblem* _THIS, Bounds* _bounds )
  */
 static inline int QProblem_getNV( QProblem* _THIS )
 {
-	return Bounds_getNV( &(_THIS->bounds) );
+	return Bounds_getNV( _THIS->bounds );
 }
 
 
@@ -1701,7 +1711,7 @@ static inline int QProblem_getNV( QProblem* _THIS )
  */
 static inline int QProblem_getNFR( QProblem* _THIS )
 {
-	return Bounds_getNFR( &(_THIS->bounds) );
+	return Bounds_getNFR( _THIS->bounds );
 }
 
 
@@ -1710,7 +1720,7 @@ static inline int QProblem_getNFR( QProblem* _THIS )
  */
 static inline int QProblem_getNFX( QProblem* _THIS )
 {
-	return Bounds_getNFX( &(_THIS->bounds) );
+	return Bounds_getNFX( _THIS->bounds );
 }
 
 
@@ -1719,7 +1729,7 @@ static inline int QProblem_getNFX( QProblem* _THIS )
  */
 static inline int QProblem_getNFV( QProblem* _THIS )
 {
-	return Bounds_getNFV( &(_THIS->bounds) );
+	return Bounds_getNFV( _THIS->bounds );
 }
 
 
@@ -2050,7 +2060,7 @@ static inline returnValue QProblem_getConstraints( QProblem* _THIS, Constraints*
 	if ( nV == 0 )
 		return THROWERROR( RET_QPOBJECT_NOT_SETUP );
 
-	ConstraintsCPY( &(_THIS->constraints),_constraints );
+	ConstraintsCPY( _THIS->constraints,_constraints );
 
 	return SUCCESSFUL_RETURN;
 }
@@ -2062,7 +2072,7 @@ static inline returnValue QProblem_getConstraints( QProblem* _THIS, Constraints*
  */
 static inline int QProblem_getNC( QProblem* _THIS )
 {
-	return Constraints_getNC( &(_THIS->constraints) );
+	return Constraints_getNC( _THIS->constraints );
 }
 
 
@@ -2071,7 +2081,7 @@ static inline int QProblem_getNC( QProblem* _THIS )
  */
 static inline int QProblem_getNEC( QProblem* _THIS )
 {
-	return Constraints_getNEC( &(_THIS->constraints) );
+	return Constraints_getNEC( _THIS->constraints );
 }
 
 
@@ -2080,7 +2090,7 @@ static inline int QProblem_getNEC( QProblem* _THIS )
  */
 static inline int QProblem_getNAC( QProblem* _THIS )
 {
-	return Constraints_getNAC( &(_THIS->constraints) );
+	return Constraints_getNAC( _THIS->constraints );
 }
 
 
@@ -2089,7 +2099,7 @@ static inline int QProblem_getNAC( QProblem* _THIS )
  */
 static inline int QProblem_getNIAC( QProblem* _THIS )
 {
-	return Constraints_getNIAC( &(_THIS->constraints) );
+	return Constraints_getNIAC( _THIS->constraints );
 }
 
 
@@ -2137,7 +2147,7 @@ static inline returnValue QProblem_setA( QProblem* _THIS, real_t* const A_new )
 
 		/* (ckirches) disable constraints with empty rows */
 		if ( qpOASES_isZero( DenseMatrix_getRowNorm( _THIS->A,j,2 ),QPOASES_ZERO ) == BT_TRUE )
-			Constraints_setType( &(_THIS->constraints),j,ST_DISABLED );
+			Constraints_setType( _THIS->constraints,j,ST_DISABLED );
 	}
 
 	return SUCCESSFUL_RETURN;

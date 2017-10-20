@@ -48,11 +48,12 @@ BEGIN_NAMESPACE_QPOASES
 int QProblem_calculateMemorySize( unsigned int nV, unsigned int nC )
 {
 	unsigned int nVC_min = (nV < nC) ? nV : nC;
+	unsigned int nVC_max = (nV > nC) ? nV : nC;
 
 	int size = 0;
 	size += sizeof(QProblem);  					  	   // size of structure itself
-	size += Bounds_calculateMemorySize(nV);			   // bounds
-	size += Constraints_calculateMemorySize(nC);	   // constraints
+	size += 2 * Bounds_calculateMemorySize(nV);		   // bounds, auxiliaryBounds
+	size += 2 * Constraints_calculateMemorySize(nC);   // constraints, auxiliaryConstraints
 	size += Flipper_calculateMemorySize(nV, nC);       // flipper
 	size += DenseMatrix_calculateMemorySize(nV, nV);   // H
 	size += DenseMatrix_calculateMemorySize(nC, nV);   // A
@@ -66,6 +67,10 @@ int QProblem_calculateMemorySize( unsigned int nV, unsigned int nC )
 	size += 2 * nV * sizeof(real_t);				   // delta_xFR_TMP, tempA
 	size += 2 * nV * sizeof(real_t);				   // ZFR_delta_xFRz, delta_xFRz
 	size += 3 * nC * sizeof(real_t);				   // tempB, delta_xFRy, delta_yAC_TMP
+	size += 3 * nV * sizeof(real_t);				   // tmp_nv 1-3
+	size += 3 * nC * sizeof(real_t);				   // tmp_nc 1-3
+	size += 1 * (nV * nV) * sizeof(real_t);			   // tmp_nv_nv
+	size += 2 * nVC_max * sizeof(real_t);			   // tmp_nvc_max 1-2
 
 	size = (size + 63) / 64 * 64;  // make multiple of typical cache line size
 	size += 1 * 64;                // align once to typical cache line size
@@ -76,6 +81,7 @@ int QProblem_calculateMemorySize( unsigned int nV, unsigned int nC )
 char *QProblem_assignMemory( unsigned int nV, unsigned int nC, QProblem **mem, void *raw_memory )
 {
 	unsigned int nVC_min = (nV < nC) ? nV : nC;
+	unsigned int nVC_max = (nV > nC) ? nV : nC;
 
 	// char pointer
 	char *c_ptr = (char *)raw_memory;
@@ -114,6 +120,12 @@ char *QProblem_assignMemory( unsigned int nV, unsigned int nC, QProblem **mem, v
 	Flipper *flipper = (*mem)->flipper;
 	c_ptr = Flipper_assignMemory(nV, nC, &flipper, c_ptr);
 
+	Bounds *auxiliaryBounds = (*mem)->auxiliaryBounds;
+	c_ptr = Bounds_assignMemory(nV, &auxiliaryBounds, c_ptr);
+
+	Constraints *auxiliaryConstraints = (*mem)->auxiliaryConstraints;
+	c_ptr = Constraints_assignMemory(nC, &auxiliaryConstraints, c_ptr);
+
 	DenseMatrix *H = (*mem)->H;
 	c_ptr = DenseMatrix_assignMemory(nV, nV, &H, c_ptr);
 
@@ -129,12 +141,95 @@ char *QProblem_assignMemory( unsigned int nV, unsigned int nC, QProblem **mem, v
 	(*mem)->ub = (real_t *) c_ptr;
 	c_ptr += nV * sizeof(real_t);
 
+	(*mem)->lbA = (real_t *) c_ptr;
+	c_ptr += nC * sizeof(real_t);
+
+	(*mem)->ubA = (real_t *) c_ptr;
+	c_ptr += nC * sizeof(real_t);
+
+	(*mem)->R = (real_t *) c_ptr;
+	c_ptr += (nV * nV) * sizeof(real_t);
+
+	(*mem)->Q = (real_t *) c_ptr;
+	c_ptr += (nV * nV) * sizeof(real_t);
+
+	(*mem)->T = (real_t *) c_ptr;
+	c_ptr += (nVC_min * nVC_min) * sizeof(real_t);
+
+	(*mem)->Ax = (real_t *) c_ptr;
+	c_ptr += nC * sizeof(real_t);
+
+	(*mem)->Ax_l = (real_t *) c_ptr;
+	c_ptr += nC * sizeof(real_t);
+
+	(*mem)->Ax_u = (real_t *) c_ptr;
+	c_ptr += nC * sizeof(real_t);
+
+	(*mem)->x = (real_t *) c_ptr;
+	c_ptr += nV * sizeof(real_t);
+
+	(*mem)->y = (real_t *) c_ptr;
+	c_ptr += (nV + nC) * sizeof(real_t);
+
+	(*mem)->delta_xFR_TMP = (real_t *) c_ptr;
+	c_ptr += nV * sizeof(real_t);
+
+	(*mem)->tempA = (real_t *) c_ptr;
+	c_ptr += nV * sizeof(real_t);
+
+	(*mem)->tempB = (real_t *) c_ptr;
+	c_ptr += nC * sizeof(real_t);
+
+	(*mem)->ZFR_delta_xFRz = (real_t *) c_ptr;
+	c_ptr += nV * sizeof(real_t);
+
+	(*mem)->delta_xFRy = (real_t *) c_ptr;
+	c_ptr += nC * sizeof(real_t);
+
+	(*mem)->delta_xFRz = (real_t *) c_ptr;
+	c_ptr += nV * sizeof(real_t);
+
+	(*mem)->delta_yAC_TMP = (real_t *) c_ptr;
+	c_ptr += nC * sizeof(real_t);
+
+	(*mem)->tmp_nv_1 = (real_t *) c_ptr;
+	c_ptr += nV * sizeof(real_t);
+
+	(*mem)->tmp_nv_2 = (real_t *) c_ptr;
+	c_ptr += nV * sizeof(real_t);
+
+	(*mem)->tmp_nv_3 = (real_t *) c_ptr;
+	c_ptr += nV * sizeof(real_t);
+
+	(*mem)->tmp_nc_1 = (real_t *) c_ptr;
+	c_ptr += nC * sizeof(real_t);
+
+	(*mem)->tmp_nc_2 = (real_t *) c_ptr;
+	c_ptr += nC * sizeof(real_t);
+
+	(*mem)->tmp_nc_3 = (real_t *) c_ptr;
+	c_ptr += nC * sizeof(real_t);
+
+	(*mem)->tmp_nv_nv = (real_t *) c_ptr;
+	c_ptr += (nV * nV) * sizeof(real_t);
+
+	(*mem)->tmp_nvc_max_1 = (real_t *) c_ptr;
+	c_ptr += nVC_max * sizeof(real_t);
+
+	(*mem)->tmp_nvc_max_2 = (real_t *) c_ptr;
+	c_ptr += nVC_max * sizeof(real_t);
+
 	return c_ptr;
 }
 
 QProblem *QProblem_createMemory( unsigned int nV, unsigned int nC )
 {
-
+	QProblem *mem;
+    int memory_size = QProblem_calculateMemorySize(nV, nC);
+    void *raw_memory_ptr = malloc(memory_size);
+    char *ptr_end =  QProblem_assignMemory(nV, nC, &mem, raw_memory_ptr);
+    assert((char*)raw_memory_ptr + memory_size >= ptr_end); (void) ptr_end;
+    return mem;
 }
 
 /*
@@ -156,14 +251,14 @@ void QProblemCON(	QProblem* _THIS,
 		qpOASES_printCopyrightNotice( );
 
 	/* consistency checks */
-	if ( ( _nV <= 0 ) || ( _nV > NVMAX ) )
+	if ( _nV <= 0 )
 	{
 		_nV = 1;
 		THROWERROR( RET_INVALID_ARGUMENTS );
 		assert( 1 == 0 );
 	}
 
-	if ( ( _nC < 0 ) || ( _nC > NCMAX ) )
+	if ( _nC < 0 )
 	{
 		_nC = 0;
 		THROWERROR( RET_INVALID_ARGUMENTS );
@@ -173,8 +268,6 @@ void QProblemCON(	QProblem* _THIS,
 	/* reset global message handler */
 	MessageHandling_reset( qpOASES_getGlobalMessageHandler() );
 
-	_THIS->H = &(_THIS->HH);
-
 	for( i=0; i<_nV; ++i ) _THIS->g[i] = 0.0;
 	for( i=0; i<_nV; ++i ) _THIS->lb[i] = 0.0;
 	for( i=0; i<_nV; ++i ) _THIS->ub[i] = 0.0;
@@ -182,7 +275,7 @@ void QProblemCON(	QProblem* _THIS,
 	for( i=0; i<_nV; ++i ) _THIS->x[i] = 0.0;
 	for( i=0; i<_nV+_nC; ++i ) _THIS->y[i] = 0.0;
 
-	Bounds_init( &(_THIS->bounds),_nV );
+	Bounds_init( _THIS->bounds,_nV );
 
 	_THIS->haveCholesky = BT_FALSE;
 
@@ -204,12 +297,10 @@ void QProblemCON(	QProblem* _THIS,
 
 	QProblem_setPrintLevel( _THIS,_THIS->options.printLevel );
 
-	_THIS->A = &(_THIS->AA);
-
 	for( i=0; i<_nC; ++i ) _THIS->lbA[i] = 0.0;
 	for( i=0; i<_nC; ++i ) _THIS->ubA[i] = 0.0;
 
-	Constraints_init( &(_THIS->constraints),_nC );
+	Constraints_init( _THIS->constraints,_nC );
 
 	_THIS->sizeT = qpOASES_getMinI( _nV,_nC );
 
@@ -227,17 +318,17 @@ void QProblemCPY(	QProblem* FROM,
 {
 	unsigned int _nV = (unsigned int)QProblem_getNV( FROM );
 	unsigned int _nC = (unsigned int)QProblem_getNC( FROM );
+	unsigned int _nVC_min = (_nV < _nC) ? _nV : _nC;
 
 	TO->bounds = FROM->bounds;
 
-	TO->HH = FROM->HH;
-	TO->H = &(TO->HH);
+	DenseMatrixCPY(FROM->H, TO->H);
 
 	QProblem_setG( TO,FROM->g );
 	QProblem_setLB( TO,FROM->lb );
 	QProblem_setUB( TO,FROM->ub );
 
-	memcpy( TO->R,FROM->R,NVMAX*NVMAX*sizeof(real_t) );
+	memcpy( TO->R,FROM->R,_nV*_nV*sizeof(real_t) );
 
 	TO->haveCholesky = FROM->haveCholesky;
 
@@ -263,8 +354,7 @@ void QProblemCPY(	QProblem* FROM,
 
 	ConstraintsCPY( &(FROM->constraints),&(TO->constraints) );
 
-	TO->AA = FROM->AA;
-	TO->A = &(TO->AA);
+	DenseMatrixCPY(FROM->A, TO->A);
 
 	QProblem_setLBA( TO,FROM->lbA );
 	QProblem_setUBA( TO,FROM->ubA );
@@ -273,8 +363,8 @@ void QProblemCPY(	QProblem* FROM,
 
 	TO->sizeT = FROM->sizeT;
 
-	memcpy( TO->T,FROM->T,NVCMIN*NVCMIN*sizeof(real_t) );
-	memcpy( TO->Q,FROM->Q,NVMAX*NVMAX*sizeof(real_t) );
+	memcpy( TO->T,FROM->T,_nVC_min*_nVC_min*sizeof(real_t) );
+	memcpy( TO->Q,FROM->Q,_nV*_nV*sizeof(real_t) );
 
 	memcpy( TO->Ax,FROM->Ax,_nC*sizeof(real_t) );
 	memcpy( TO->Ax_l,FROM->Ax_l,_nC*sizeof(real_t) );
@@ -296,16 +386,17 @@ returnValue QProblem_reset( QProblem* _THIS )
 	int i;
 	int nV = QProblem_getNV( _THIS );
 	int nC = QProblem_getNC( _THIS );
+	int nVC_min = (nV < nC) ? nV : nC;
 
 	if ( nV == 0 )
 		return THROWERROR( RET_QPOBJECT_NOT_SETUP );
 
 
 	/* 1) Reset bounds. */
-	Bounds_init( &(_THIS->bounds),nV );
+	Bounds_init( _THIS->bounds,nV );
 
 	/* 2) Reset Cholesky decomposition. */
-	for( i=0; i<NVMAX*NVMAX; ++i )
+	for( i=0; i<nV*nV; ++i )
 		_THIS->R[i] = 0.0;
 
 	_THIS->haveCholesky = BT_FALSE;
@@ -326,13 +417,13 @@ returnValue QProblem_reset( QProblem* _THIS )
 	_THIS->rampOffset = 0;
 
 	/* 2) Reset constraints. */
-	Constraints_init( &(_THIS->constraints),nC );
+	Constraints_init( _THIS->constraints,nC );
 
 	/* 3) Reset TQ factorisation. */
-	for( i=0; i<NVCMIN*NVCMIN; ++i )
+	for( i=0; i<nVC_min*nVC_min; ++i )
 		_THIS->T[i] = 0.0;
 
-	for( i=0; i<NVMAX*NVMAX; ++i )
+	for( i=0; i<nV*nV; ++i )
 		_THIS->Q[i] = 0.0;
 
 	/* 4) Reset constraint product pointer. */
@@ -689,10 +780,10 @@ returnValue QProblem_hotstart(	QProblem* _THIS,
 
 	BooleanType isFirstCall = BT_TRUE;
 
-	myStatic real_t ub_new_far[NVMAX];
-	myStatic real_t lb_new_far[NVMAX];
-	myStatic real_t ubA_new_far[NCMAX];
-	myStatic real_t lbA_new_far[NCMAX];
+	real_t *ub_new_far = _THIS->tmp_nv_1;
+	real_t *lb_new_far = _THIS->tmp_nv_2;
+	real_t *ubA_new_far = _THIS->tmp_nc_1;
+	real_t *lbA_new_far = _THIS->tmp_nc_2;
 
 	real_t tol;
 
@@ -858,11 +949,11 @@ returnValue QProblem_hotstartF(	QProblem* _THIS, const char* const g_file,
 	returnValue returnvalue;
 
 	/* 1) Allocate memory (if bounds exist). */
-	myStatic real_t g_new[NVMAX];
-	myStatic real_t lb_new[NVMAX];
-	myStatic real_t ub_new[NVMAX];
-	myStatic real_t lbA_new[NCMAX];
-	myStatic real_t ubA_new[NCMAX];
+	real_t *g_new = _THIS->tmp_nv_1;
+	real_t *lb_new = _THIS->tmp_nv_2;
+	real_t *ub_new = _THIS->tmp_nv_3;
+	real_t *lbA_new = _THIS->tmp_nc_1;
+	real_t *ubA_new = _THIS->tmp_nc_2;
 
 
 	if ( nV == 0 )
@@ -964,12 +1055,11 @@ returnValue QProblem_hotstartFW(	QProblem* _THIS, const char* const g_file,
 	returnValue returnvalue;
 
 	/* 1) Allocate memory (if bounds exist). */
-	myStatic real_t g_new[NVMAX];
-	myStatic real_t lb_new[NVMAX];
-	myStatic real_t ub_new[NVMAX];
-	myStatic real_t lbA_new[NCMAX];
-	myStatic real_t ubA_new[NCMAX];
-
+	real_t *g_new = _THIS->tmp_nv_1;
+	real_t *lb_new = _THIS->tmp_nv_2;
+	real_t *ub_new = _THIS->tmp_nv_3;
+	real_t *lbA_new = _THIS->tmp_nc_1;
+	real_t *ubA_new = _THIS->tmp_nc_2;
 
 	if ( nV == 0 )
 		return THROWERROR( RET_QPOBJECT_NOT_SETUP );
@@ -1018,10 +1108,10 @@ returnValue QProblem_solveCurrentEQP(	QProblem* _THIS,
 	int nFX = QProblem_getNFX( _THIS );
 	int nAC = QProblem_getNAC( _THIS );
 
-	myStatic real_t delta_xFX[NVMAX];
-	myStatic real_t delta_xFR[NVMAX];
-	myStatic real_t delta_yAC[NCMAX];
-	myStatic real_t delta_yFX[NVMAX];
+	real_t *delta_xFX = _THIS->tmp_nv_1;
+	real_t *delta_xFR = _THIS->tmp_nv_2;
+	real_t *delta_yAC = _THIS->tmp_nc_1;
+	real_t *delta_yFX = _THIS->tmp_nv_3;
 
 	/* 1) Determine index arrays. */
 	int* FR_idx;
@@ -1151,7 +1241,10 @@ returnValue QProblem_getDualSolution( QProblem* _THIS, real_t* const yOpt )
 {
 	int i;
 
-	for( i=0; i<QProblem_getNV( _THIS )+QProblem_getNC( _THIS ); ++i )
+	int nV = QProblem_getNV( _THIS );
+	int nC = QProblem_getNC( _THIS );
+
+	for( i=0; i<nV+nC; ++i )
 		yOpt[i] = _THIS->y[i];
 
 	/* return optimal dual solution vector
@@ -1214,7 +1307,7 @@ real_t QProblem_getObjValX( QProblem* _THIS, const real_t* const _x )
 	int nV = QProblem_getNV( _THIS );
 
 	real_t objVal = 0.0;
-	myStatic real_t Hx[NVMAX];
+	real_t *Hx = _THIS->tmp_nv_1;
 
 	if ( nV == 0 )
 		return 0.0;
@@ -1355,12 +1448,12 @@ returnValue QProblem_printProperties( QProblem* _THIS )
 	snprintf( myPrintfString,QPOASES_MAX_STRING_LENGTH,  "Number of Variables: %4.1d\n",QProblem_getNV( _THIS ) );
 	qpOASES_myPrintf( myPrintfString );
 
-	if ( Bounds_hasNoLower( &(_THIS->bounds) ) == BT_TRUE )
+	if ( Bounds_hasNoLower( _THIS->bounds ) == BT_TRUE )
 			qpOASES_myPrintf( "Variables are not bounded from below.\n" );
 		else
 			qpOASES_myPrintf( "Variables are bounded from below.\n" );
 
-	if ( Bounds_hasNoUpper( &(_THIS->bounds) ) == BT_TRUE )
+	if ( Bounds_hasNoUpper( _THIS->bounds ) == BT_TRUE )
 			qpOASES_myPrintf( "Variables are not bounded from above.\n" );
 		else
 			qpOASES_myPrintf( "Variables are bounded from above.\n" );
@@ -1380,12 +1473,12 @@ returnValue QProblem_printProperties( QProblem* _THIS )
 
 	if ( QProblem_getNC( _THIS ) > 0 )
 	{
-		if ( Constraints_hasNoLower( &(_THIS->constraints) ) == BT_TRUE )
+		if ( Constraints_hasNoLower( _THIS->constraints ) == BT_TRUE )
 				qpOASES_myPrintf( "Constraints are not bounded from below.\n" );
 			else
 				qpOASES_myPrintf( "Constraints are bounded from below.\n" );
 
-		if ( Constraints_hasNoUpper( &(_THIS->constraints) ) == BT_TRUE )
+		if ( Constraints_hasNoUpper( _THIS->constraints ) == BT_TRUE )
 				qpOASES_myPrintf( "Constraints are not bounded from above.\n" );
 			else
 				qpOASES_myPrintf( "Constraints are bounded from above.\n" );
@@ -1623,10 +1716,10 @@ returnValue QProblemBCPY_computeCholesky( QProblem* _THIS )
 	int* FR_idx;
 
 	long info = 0;
-	unsigned long _nFR = (unsigned long)nFR, _nV = NVMAX;
+	unsigned long _nFR = (unsigned long)nFR, _nV = nV;
 
 	/* 1) Initialises R with all zeros. */
-	for( i=0; i<NVMAX*NVMAX; ++i )
+	for( i=0; i<nV*nV; ++i )
 		_THIS->R[i] = 0.0;
 
 	/* 2) Calculate Cholesky decomposition of H (projected to free variables). */
@@ -1659,7 +1752,7 @@ returnValue QProblemBCPY_computeCholesky( QProblem* _THIS )
 
 				/* get H */
 				for ( j=0; j<nFR; ++j )
-					DenseMatrix_getCol( _THIS->H, FR_idx[j], Bounds_getFree( &(_THIS->bounds) ), 1.0, &(_THIS->R[j*NVMAX]));
+					DenseMatrix_getCol( _THIS->H, FR_idx[j], Bounds_getFree( &(_THIS->bounds) ), 1.0, &(_THIS->R[j*nV]));
 
 				/* R'*R = H */
 				POTRF( "U", &_nFR, _THIS->R, &_nV, &info );
@@ -1713,7 +1806,7 @@ returnValue QProblemBCPY_obtainAuxiliaryWorkingSet(	QProblem* _THIS, const real_
 		for( i=0; i<nV; ++i )
 		{
 			#ifdef __ALWAYS_INITIALISE_WITH_ALL_EQUALITIES__
-			if ( Bounds_getType( &(_THIS->bounds),i ) == ST_EQUALITY )
+			if ( Bounds_getType( _THIS->bounds,i ) == ST_EQUALITY )
 			{
 				if ( Bounds_setupBound( auxiliaryBounds,i,ST_LOWER ) != SUCCESSFUL_RETURN )
 					return THROWERROR( RET_OBTAINING_WORKINGSET_FAILED );
@@ -1749,7 +1842,7 @@ returnValue QProblemBCPY_obtainAuxiliaryWorkingSet(	QProblem* _THIS, const real_
 
 				/* Moreover, add all implictly fixed variables if specified. */
 				#ifdef __ALWAYS_INITIALISE_WITH_ALL_EQUALITIES__
-				if ( Bounds_getType( &(_THIS->bounds),i ) == ST_EQUALITY )
+				if ( Bounds_getType( _THIS->bounds,i ) == ST_EQUALITY )
 				{
 					if ( Bounds_setupBound( auxiliaryBounds,i,ST_LOWER ) != SUCCESSFUL_RETURN )
 						return THROWERROR( RET_OBTAINING_WORKINGSET_FAILED );
@@ -1784,7 +1877,7 @@ returnValue QProblemBCPY_obtainAuxiliaryWorkingSet(	QProblem* _THIS, const real_
 
 				/* Moreover, add all implictly fixed variables if specified. */
 				#ifdef __ALWAYS_INITIALISE_WITH_ALL_EQUALITIES__
-				if ( Bounds_getType( &(_THIS->bounds),i ) == ST_EQUALITY )
+				if ( Bounds_getType( _THIS->bounds,i ) == ST_EQUALITY )
 				{
 					if ( Bounds_setupBound( auxiliaryBounds,i,ST_LOWER ) != SUCCESSFUL_RETURN )
 						return THROWERROR( RET_OBTAINING_WORKINGSET_FAILED );
@@ -1805,7 +1898,7 @@ returnValue QProblemBCPY_obtainAuxiliaryWorkingSet(	QProblem* _THIS, const real_
 		{
 			for( i=0; i<nV; ++i )
 			{
-				switch( Bounds_getType( &(_THIS->bounds),i ) )
+				switch( Bounds_getType( _THIS->bounds,i ) )
 				{
 					case ST_UNBOUNDED:
 						if ( Bounds_setupBound( auxiliaryBounds,i,ST_INACTIVE ) != SUCCESSFUL_RETURN )
@@ -1856,6 +1949,7 @@ returnValue QProblem_backsolveRrem(	QProblem* _THIS, const real_t* const b, Bool
 {
 	int i, j;
 	int nR = QProblem_getNZ( _THIS );
+	int nV = QProblem_getNV( _THIS );
 
 	real_t sum;
 
@@ -2019,7 +2113,7 @@ returnValue QProblemBCPY_setupQPdataFromFile(	QProblem* _THIS, const char* const
 
 
 	/* 1) Load Hessian matrix from file. */
-	myStatic real_t _H[NVMAX*NVMAX];
+	real_t *_H = _THIS->tmp_nv_nv;
 
 	if ( H_file != 0 )
 	{
@@ -2334,14 +2428,14 @@ returnValue QProblem_solveInitialQP(	QProblem* _THIS,
 	int nV = QProblem_getNV( _THIS );
 	int nC = QProblem_getNC( _THIS );
 
-	myStatic Bounds auxiliaryBounds;
-	myStatic Constraints auxiliaryConstraints;
+	Bounds *auxiliaryBounds = _THIS->auxiliaryBounds;
+	Constraints *auxiliaryConstraints = _THIS->auxiliaryConstraints;
 
-	myStatic real_t g_original[NVMAX];
-	myStatic real_t lb_original[NVMAX];
-	myStatic real_t ub_original[NVMAX];
-	myStatic real_t lbA_original[NCMAX];
-	myStatic real_t ubA_original[NCMAX];
+	real_t *g_original = _THIS->tmp_nv_1;
+	real_t *lb_original = _THIS->tmp_nv_2;
+	real_t *ub_original = _THIS->tmp_nv_3;
+	real_t *lbA_original = _THIS->tmp_nc_1;
+	real_t *ubA_original = _THIS->tmp_nc_2;
 
 	returnValue returnvalue;
 
@@ -2364,8 +2458,8 @@ returnValue QProblem_solveInitialQP(	QProblem* _THIS,
 
 	_THIS->status = QPS_NOTINITIALISED;
 
-	BoundsCON( &auxiliaryBounds,nV );
-	ConstraintsCON( &auxiliaryConstraints,nC );
+	BoundsCON( auxiliaryBounds,nV );
+	ConstraintsCON( auxiliaryConstraints,nC );
 
 	/* I) ANALYSE QP DATA: */
 	/* 1) Check if Hessian happens to be the identity matrix. */
@@ -2381,10 +2475,10 @@ returnValue QProblem_solveInitialQP(	QProblem* _THIS,
 
 	/* II) SETUP AUXILIARY QP WITH GIVEN OPTIMAL SOLUTION: */
 	/* 1) Setup bounds and constraints data structure. */
-	if ( Bounds_setupAllFree( &(_THIS->bounds) ) != SUCCESSFUL_RETURN )
+	if ( Bounds_setupAllFree( _THIS->bounds ) != SUCCESSFUL_RETURN )
 		return THROWERROR( RET_INIT_FAILED );
 
-	if ( Constraints_setupAllInactive( &(_THIS->constraints) ) != SUCCESSFUL_RETURN )
+	if ( Constraints_setupAllInactive( _THIS->constraints ) != SUCCESSFUL_RETURN )
 		return THROWERROR( RET_INIT_FAILED );
 
 	/* 2) Setup optimal primal/dual solution for auxiliary QP. */
