@@ -487,8 +487,8 @@ returnValue QProblemB_hotstart(	QProblemB* _THIS, const real_t* const g_new,
 
 	BooleanType isFirstCall = BT_TRUE;
 
-	myStatic real_t ub_new_far[NVMAX];
-	myStatic real_t lb_new_far[NVMAX];
+	real_t *ub_new_far = _THIS->ws->ub_new_far;
+	real_t *lb_new_far = _THIS->ws->lb_new_far;
 	
 	real_t tol;
 
@@ -621,9 +621,9 @@ returnValue QProblemB_hotstartF(	QProblemB* _THIS, const char* const g_file,
 	returnValue returnvalue;
 
 	/* 1) Allocate memory (if bounds exist). */
-	myStatic real_t g_new[NVMAX];
-	myStatic real_t lb_new[NVMAX];
-	myStatic real_t ub_new[NVMAX];
+	real_t *g_new = _THIS->ws->g_new;
+	real_t *lb_new = _THIS->ws->lb_new;
+	real_t *ub_new = _THIS->ws->ub_new;
 
 
 	if ( nV == 0 )
@@ -716,9 +716,9 @@ returnValue QProblemB_hotstartFW(	QProblemB* _THIS, const char* const g_file,
 	returnValue returnvalue;
 
 	/* 1) Allocate memory (if bounds exist). */
-	myStatic real_t g_new[NVMAX];
-	myStatic real_t lb_new[NVMAX];
-	myStatic real_t ub_new[NVMAX];
+	real_t *g_new = _THIS->ws->g_new2;
+	real_t *lb_new = _THIS->ws->lb_new2;
+	real_t *ub_new = _THIS->ws->ub_new2;
 
 	
 	if ( nV == 0 )
@@ -834,7 +834,7 @@ real_t QProblemB_getObjValX( QProblemB* _THIS, const real_t* const _x )
 	int nV = QProblemB_getNV( _THIS );
 
 	real_t objVal = 0.0;
-	myStatic real_t Hx[NVMAX];
+	real_t *Hx = _THIS->ws->Hx;
 
 	if ( nV == 0 )
 		return 0.0;
@@ -1726,7 +1726,7 @@ returnValue QProblemB_setupQPdataFromFile(	QProblemB* _THIS, const char* const H
 
 
 	/* 1) Load Hessian matrix from file. */
-	myStatic real_t _H[NVMAX*NVMAX];
+	real_t *_H = _THIS->ws->_H;
 
 	if ( H_file != 0 )
 	{
@@ -2155,9 +2155,9 @@ returnValue QProblemB_solveInitialQP(	QProblemB* _THIS, const real_t* const xOpt
 	
 	returnValue returnvalue;
 	
-	myStatic real_t g_original[NVMAX];
-	myStatic real_t lb_original[NVMAX];
-	myStatic real_t ub_original[NVMAX];
+	real_t *g_original = _THIS->ws->g_original;
+	real_t *lb_original = _THIS->ws->lb_original;
+	real_t *ub_original = _THIS->ws->ub_original;
 
 	/* start runtime measurement */
 	real_t starttime = 0.0;
@@ -2297,13 +2297,13 @@ returnValue QProblemB_solveQP(	QProblemB* _THIS, const real_t* const g_new,
 	/* I) PREPARATIONS */
 	/* 1) Allocate delta vectors of gradient and bounds,
 	 *    index arrays and step direction arrays. */
-	myStatic real_t delta_xFR[NVMAX];
-	myStatic real_t delta_xFX[NVMAX];
-	myStatic real_t delta_yFX[NVMAX];
+	real_t *delta_xFR = _THIS->ws->delta_xFR;
+	real_t *delta_xFX = _THIS->ws->delta_xFX;
+	real_t *delta_yFX = _THIS->ws->delta_yFX;
 
-	myStatic real_t delta_g[NVMAX];
-	myStatic real_t delta_lb[NVMAX];
-	myStatic real_t delta_ub[NVMAX];
+	real_t *delta_g = _THIS->ws->delta_g;
+	real_t *delta_lb = _THIS->ws->delta_lb;
+	real_t *delta_ub = _THIS->ws->delta_ub;
 
 	returnValue returnvalue;
 	BooleanType Delta_bB_isZero;
@@ -2529,7 +2529,7 @@ returnValue QProblemB_solveRegularisedQP(	QProblemB* _THIS, const real_t* const 
 	real_t cputime_total = 0.0;
 	real_t cputime_cur   = 0.0;
 
-	myStatic real_t gMod[NVMAX];
+	real_t *gMod = _THIS->ws->gMod;
 
 
 	/* Perform normal QP solution if QP has not been regularised. */
@@ -3084,8 +3084,8 @@ returnValue QProblemB_performStep(	QProblemB* _THIS,
 
 	int BC_idx_tmp = -1;
 
-	myStatic real_t num[NVMAX];
-	myStatic real_t den[NVMAX];
+	real_t *num = _THIS->ws->num;
+	real_t *den = _THIS->ws->den;
 	
 	int* FR_idx;
 	int* FX_idx;
@@ -3419,8 +3419,8 @@ returnValue QProblemB_removeBound(	QProblemB* _THIS,
 	
 	int* FR_idx;
 
-	myStatic real_t rhs[NVMAX+1];
-	myStatic real_t r[NVMAX];
+	real_t *rhs = _THIS->ws->rhs;
+	real_t *r = _THIS->ws->r;
 
 	real_t r0;
 

@@ -2611,16 +2611,16 @@ returnValue QProblem_solveQP(	QProblem* _THIS,
 	/* 1) Allocate delta vectors of gradient and (constraints') bounds,
 	 *    index arrays and step direction arrays. */
 
-	myStatic real_t delta_xFR[NVMAX];
-	myStatic real_t delta_xFX[NVMAX];
-	myStatic real_t delta_yAC[NCMAX];
-	myStatic real_t delta_yFX[NVMAX];
+	real_t *delta_xFR = _THIS->ws->delta_xFR;
+	real_t *delta_xFX = _THIS->ws->delta_xFX;
+	real_t *delta_yAC = _THIS->ws->delta_yAC;
+	real_t *delta_yFX = _THIS->ws->delta_yFX;
 
-	myStatic real_t delta_g[NVMAX];
-	myStatic real_t delta_lb[NVMAX];
-	myStatic real_t delta_ub[NVMAX];
-	myStatic real_t delta_lbA[NCMAX];
-	myStatic real_t delta_ubA[NCMAX];
+	real_t *delta_g = _THIS->ws->delta_g;
+	real_t *delta_lb = _THIS->ws->delta_lb;
+	real_t *delta_ub = _THIS->ws->delta_ub;
+	real_t *delta_lbA = _THIS->ws->delta_lbA;
+	real_t *delta_ubA = _THIS->ws->delta_ubA;
 
 	returnValue returnvalue;
 	BooleanType Delta_bC_isZero, Delta_bB_isZero;
@@ -2857,7 +2857,7 @@ returnValue QProblem_solveRegularisedQP(	QProblem* _THIS,
 	real_t cputime_total = 0.0;
 	real_t cputime_cur   = 0.0;
 
-	myStatic real_t gMod[NVMAX];
+	real_t *gMod = _THIS->ws->gMod;
 
 	/* Perform normal QP solution if QP has not been regularised. */
 	if ( QProblem_usingRegularisation( _THIS ) == BT_FALSE )
@@ -3835,8 +3835,8 @@ returnValue QProblem_addConstraint(	QProblem* _THIS,
 	int nFR, nAC, nZ, tcol;
 	int* FR_idx;
 
-	myStatic real_t aFR[NVMAX];
-	myStatic real_t wZ[NVMAX];
+	real_t *aFR = _THIS->ws->aFR;
+	real_t *wZ = _THIS->ws->wZ;
 
 	real_t c, s, nu;
 
@@ -4001,14 +4001,14 @@ returnValue QProblem_addConstraint_checkLI( QProblem* _THIS, int number )
 
 	int *FX_idx, *AC_idx, *IAC_idx, *FR_idx;
 
-	myStatic real_t delta_g[NVMAX];
-	myStatic real_t delta_xFX[NVMAX];
-	myStatic real_t delta_xFR[NVMAX];
-	myStatic real_t delta_yAC[NCMAX];
-	myStatic real_t delta_yFX[NVMAX];
+	real_t *delta_g = _THIS->ws->delta_g2;
+	real_t *delta_xFX = _THIS->ws->delta_xFX2;
+	real_t *delta_xFR = _THIS->ws->delta_xFR2;
+	real_t *delta_yAC = _THIS->ws->delta_yAC2;
+	real_t *delta_yFX = _THIS->ws->delta_yFX2;
 
-	myStatic real_t nul[NVCMAX];
-	myStatic real_t Arow[NVMAX];
+	real_t *nul = _THIS->ws->nul;
+	real_t *Arow = _THIS->ws->Arow;
 
 	real_t weight = 0.0;
 	real_t zero = 0.0;
@@ -4123,11 +4123,11 @@ returnValue QProblem_addConstraint_ensureLI( QProblem* _THIS, int number, Subjec
 
 	int *FR_idx, *FX_idx, *AC_idx;
 
-	myStatic real_t xiC[NCMAX];
-	myStatic real_t xiC_TMP[NCMAX];
-	myStatic real_t xiB[NVMAX];
-	myStatic real_t Arow[NVMAX];
-	myStatic real_t num[NVMAX];
+	real_t *xiC = _THIS->ws->xiC;
+	real_t *xiC_TMP = _THIS->ws->xiC_TMP;
+	real_t *xiB = _THIS->ws->xiB;
+	real_t *Arow = _THIS->ws->Arow2;
+	real_t *num = _THIS->ws->num;
 
 	returnValue returnvalue = SUCCESSFUL_RETURN;
 
@@ -4301,9 +4301,9 @@ returnValue QProblem_addBound(	QProblem* _THIS, int number, SubjectToStatus B_st
 	int nFR, nAC, nZ, tcol, lastfreenumber;
 
 	int* FR_idx;
-	myStatic real_t w[NVMAX];
+	real_t *w = _THIS->ws->w;
 	real_t c, s, nu;
-	myStatic real_t tmp[NCMAX];
+	real_t *tmp = _THIS->ws->tmp;
 
 
 	/* consistency checks */
@@ -4476,14 +4476,14 @@ returnValue QProblem_addBound_checkLI( QProblem* _THIS, int number )
 	int nC  = QProblem_getNC( _THIS );
 	returnValue returnvalue = RET_LINEARLY_DEPENDENT;
 
-	myStatic real_t delta_g[NVMAX];
-	myStatic real_t delta_xFX[NVMAX];
-	myStatic real_t delta_xFR[NVMAX];
-	myStatic real_t delta_yAC[NCMAX];
-	myStatic real_t delta_yFX[NVMAX];
+	real_t *delta_g = _THIS->ws->delta_g3;
+	real_t *delta_xFX = _THIS->ws->delta_xFX3;
+	real_t *delta_xFR = _THIS->ws->delta_xFR3;
+	real_t *delta_yAC = _THIS->ws->delta_yAC3;
+	real_t *delta_yFX = _THIS->ws->delta_yFX3;
 
 	int dim, nZ;
-	myStatic real_t nul[NVCMAX];
+	real_t *nul = _THIS->ws->nul2;
 	returnValue dsdReturnValue;
 
 	real_t weight = 0.0;
@@ -4585,10 +4585,10 @@ returnValue QProblem_addBound_ensureLI( QProblem* _THIS, int number, SubjectToSt
 
 	int *FR_idx, *FX_idx, *AC_idx;
 
-	myStatic real_t xiC[NCMAX];
-	myStatic real_t xiC_TMP[NCMAX];
-	myStatic real_t xiB[NVMAX];
-	myStatic real_t num[NVMAX];
+	real_t *xiC = _THIS->ws->xiC2;
+	real_t *xiC_TMP = _THIS->ws->xiC_TMP2;
+	real_t *xiB = _THIS->ws->xiB2;
+	real_t *num = _THIS->ws->num2;
 
 	real_t y_min = _THIS->options.maxDualJump;
 	int y_min_number = -1;
@@ -4773,11 +4773,11 @@ returnValue QProblem_removeConstraint(	QProblem* _THIS, int number,
 
 	int *FR_idx;
 
-	myStatic real_t Hz[NVMAX];
-	myStatic real_t z[NVMAX];
+	real_t *Hz = _THIS->ws->Hz;
+	real_t *z = _THIS->ws->z;
 	real_t rho2 = 0.0;
-	myStatic real_t ZHz[NVMAX];
-	myStatic real_t r[NVMAX];
+	real_t *ZHz = _THIS->ws->ZHz;
+	real_t *r = _THIS->ws->r;
 
 	real_t c, s, nu;
 
@@ -5003,15 +5003,15 @@ returnValue QProblem_removeBound(	QProblem* _THIS, int number,
 
 	int nnFRp1;
 
-	myStatic real_t tmp[NCMAX];
+	real_t *tmp = _THIS->ws->tmp2;
 	real_t c, s, nu;
 	real_t z2, rho2;
 
-	myStatic real_t Hz[NVMAX];
-	myStatic real_t z[NVMAX];
+	real_t *Hz = _THIS->ws->Hz2;
+	real_t *z = _THIS->ws->z2;
 
-	myStatic real_t r[NVMAX];
-	myStatic real_t rhs[NVMAX];
+	real_t *r = _THIS->ws->r2;
+	real_t *rhs = _THIS->ws->rhs;
 
 
 	/* consistency checks */
@@ -5254,14 +5254,14 @@ returnValue QProblem_ensureNonzeroCurvature(	QProblem* _THIS,
 	int nFX = QProblem_getNFX( _THIS );
 	int nIAC = QProblem_getNIAC( _THIS );
 
-	myStatic real_t delta_xFX[NVMAX];
-	myStatic real_t delta_xFR[NVMAX];
-	myStatic real_t delta_yAC[NCMAX];
-	myStatic real_t delta_yFX[NVMAX];
+	real_t *delta_xFX = _THIS->ws->delta_xFX4;
+	real_t *delta_xFR = _THIS->ws->delta_xFR4;
+	real_t *delta_yAC = _THIS->ws->delta_yAC4;
+	real_t *delta_yFX = _THIS->ws->delta_yFX4;
 
 	int dim;
-	myStatic real_t nul[NVCMAX];
-	myStatic real_t ek[NVMAX]; /* minus e_k (bound k is removed) */
+	real_t *nul = _THIS->ws->nul3;
+	real_t *ek = _THIS->ws->ek;
 
 	real_t one = 1.0;
 
@@ -5269,10 +5269,10 @@ returnValue QProblem_ensureNonzeroCurvature(	QProblem* _THIS,
 	real_t normXi = 0.0;
 	real_t normS = 0.0;
 	real_t sigmaLBnd, sigmaLCnstr, sigmaUBnd, sigmaUCnstr, sigma;
-	myStatic real_t x_W[NVMAX];
+	real_t *x_W = _THIS->ws->x_W;
 
-	myStatic real_t As[NCMAX];
-	myStatic real_t Ax_W[NCMAX];
+	real_t *As = _THIS->ws->As;
+	real_t *Ax_W = _THIS->ws->Ax_W;
 
 	Indexlist_getNumberArray( Bounds_getFree( &(_THIS->bounds) ),&FR_idx );
 	Indexlist_getNumberArray( Bounds_getFixed( &(_THIS->bounds) ),&FX_idx );
@@ -5951,14 +5951,14 @@ returnValue QProblem_performStep(	QProblem* _THIS, const real_t* const delta_g,
 
 	int BC_idx_tmp = -1;
 
-	myStatic real_t num[NVCMAX];
-	myStatic real_t den[NVCMAX];
+	real_t *num = _THIS->ws->num3;
+	real_t *den = _THIS->ws->den;
 
-	myStatic real_t delta_Ax_l[NCMAX];
-	myStatic real_t delta_Ax_u[NCMAX];
-	myStatic real_t delta_Ax[NCMAX];
+	real_t *delta_Ax_l = _THIS->ws->delta_Ax_l;
+	real_t *delta_Ax_u = _THIS->ws->delta_Ax_u;
+	real_t *delta_Ax = _THIS->ws->delta_Ax;
 
-	myStatic real_t delta_x[NVMAX];
+	real_t *delta_x = _THIS->ws->delta_x;
 
 	/* initialise maximum steplength array */
 	_THIS->tau = 1.0;
@@ -6913,7 +6913,7 @@ returnValue QProblem_setupQPdataFromFile(	QProblem* _THIS,
 
 	returnValue returnvalue;
 
-	myStatic real_t _A[NCMAX*NVMAX];
+	real_t *_A = _THIS->ws->_A;
 
 	/* 1) Load Hessian matrix as well as lower and upper bounds vectors from files. */
 	returnvalue = QProblemBCPY_setupQPdataFromFile( _THIS,H_file,g_file,lb_file,ub_file );
@@ -7044,8 +7044,8 @@ returnValue QProblem_printIteration( 	QProblem* _THIS,
 	real_t stat, bfeas, cfeas, bcmpl, ccmpl, Tmaxomin;
 	real_t Tmin, Tmax;
 
-	myStatic real_t grad[NVMAX];
-	myStatic real_t AX[NCMAX];
+	real_t *grad = _THIS->ws->grad;
+	real_t *AX = _THIS->ws->AX;
 
 	myStatic char myPrintfString[QPOASES_MAX_STRING_LENGTH];
 	myStatic char info[QPOASES_MAX_STRING_LENGTH];
