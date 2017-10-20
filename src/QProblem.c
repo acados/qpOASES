@@ -67,10 +67,6 @@ int QProblem_calculateMemorySize( unsigned int nV, unsigned int nC )
 	size += 2 * nV * sizeof(real_t);				   // delta_xFR_TMP, tempA
 	size += 2 * nV * sizeof(real_t);				   // ZFR_delta_xFRz, delta_xFRz
 	size += 3 * nC * sizeof(real_t);				   // tempB, delta_xFRy, delta_yAC_TMP
-	size += 3 * nV * sizeof(real_t);				   // tmp_nv 1-3
-	size += 3 * nC * sizeof(real_t);				   // tmp_nc 1-3
-	size += 1 * (nV * nV) * sizeof(real_t);			   // tmp_nv_nv
-	size += 2 * nVC_max * sizeof(real_t);			   // tmp_nvc_max 1-2
 
 	size = (size + 63) / 64 * 64;  // make multiple of typical cache line size
 	size += 1 * 64;                // align once to typical cache line size
@@ -191,33 +187,6 @@ char *QProblem_assignMemory( unsigned int nV, unsigned int nC, QProblem **mem, v
 
 	(*mem)->delta_yAC_TMP = (real_t *) c_ptr;
 	c_ptr += nC * sizeof(real_t);
-
-	(*mem)->tmp_nv_1 = (real_t *) c_ptr;
-	c_ptr += nV * sizeof(real_t);
-
-	(*mem)->tmp_nv_2 = (real_t *) c_ptr;
-	c_ptr += nV * sizeof(real_t);
-
-	(*mem)->tmp_nv_3 = (real_t *) c_ptr;
-	c_ptr += nV * sizeof(real_t);
-
-	(*mem)->tmp_nc_1 = (real_t *) c_ptr;
-	c_ptr += nC * sizeof(real_t);
-
-	(*mem)->tmp_nc_2 = (real_t *) c_ptr;
-	c_ptr += nC * sizeof(real_t);
-
-	(*mem)->tmp_nc_3 = (real_t *) c_ptr;
-	c_ptr += nC * sizeof(real_t);
-
-	(*mem)->tmp_nv_nv = (real_t *) c_ptr;
-	c_ptr += (nV * nV) * sizeof(real_t);
-
-	(*mem)->tmp_nvc_max_1 = (real_t *) c_ptr;
-	c_ptr += nVC_max * sizeof(real_t);
-
-	(*mem)->tmp_nvc_max_2 = (real_t *) c_ptr;
-	c_ptr += nVC_max * sizeof(real_t);
 
 	return c_ptr;
 }
@@ -780,10 +749,10 @@ returnValue QProblem_hotstart(	QProblem* _THIS,
 
 	BooleanType isFirstCall = BT_TRUE;
 
-	real_t *ub_new_far = _THIS->tmp_nv_1;
-	real_t *lb_new_far = _THIS->tmp_nv_2;
-	real_t *ubA_new_far = _THIS->tmp_nc_1;
-	real_t *lbA_new_far = _THIS->tmp_nc_2;
+	real_t *ub_new_far = _THIS->ws->ub_new_far;
+	real_t *lb_new_far = _THIS->ws->lb_new_far;
+	real_t *ubA_new_far = _THIS->ws->ubA_new_far;
+	real_t *lbA_new_far = _THIS->ws->lbA_new_far;
 
 	real_t tol;
 
@@ -949,11 +918,11 @@ returnValue QProblem_hotstartF(	QProblem* _THIS, const char* const g_file,
 	returnValue returnvalue;
 
 	/* 1) Allocate memory (if bounds exist). */
-	real_t *g_new = _THIS->tmp_nv_1;
-	real_t *lb_new = _THIS->tmp_nv_2;
-	real_t *ub_new = _THIS->tmp_nv_3;
-	real_t *lbA_new = _THIS->tmp_nc_1;
-	real_t *ubA_new = _THIS->tmp_nc_2;
+	real_t *g_new = _THIS->ws->g_new;
+	real_t *lb_new = _THIS->ws->lb_new;
+	real_t *ub_new = _THIS->ws->ub_new;
+	real_t *lbA_new = _THIS->ws->lbA_new;
+	real_t *ubA_new = _THIS->ws->ubA_new;
 
 
 	if ( nV == 0 )
@@ -1055,11 +1024,11 @@ returnValue QProblem_hotstartFW(	QProblem* _THIS, const char* const g_file,
 	returnValue returnvalue;
 
 	/* 1) Allocate memory (if bounds exist). */
-	real_t *g_new = _THIS->tmp_nv_1;
-	real_t *lb_new = _THIS->tmp_nv_2;
-	real_t *ub_new = _THIS->tmp_nv_3;
-	real_t *lbA_new = _THIS->tmp_nc_1;
-	real_t *ubA_new = _THIS->tmp_nc_2;
+	real_t *g_new = _THIS->ws->g_new2;
+	real_t *lb_new = _THIS->ws->lb_new2;
+	real_t *ub_new = _THIS->ws->ub_new2;
+	real_t *lbA_new = _THIS->ws->lbA_new2;
+	real_t *ubA_new = _THIS->ws->ubA_new2;
 
 	if ( nV == 0 )
 		return THROWERROR( RET_QPOBJECT_NOT_SETUP );
@@ -1108,10 +1077,10 @@ returnValue QProblem_solveCurrentEQP(	QProblem* _THIS,
 	int nFX = QProblem_getNFX( _THIS );
 	int nAC = QProblem_getNAC( _THIS );
 
-	real_t *delta_xFX = _THIS->tmp_nv_1;
-	real_t *delta_xFR = _THIS->tmp_nv_2;
-	real_t *delta_yAC = _THIS->tmp_nc_1;
-	real_t *delta_yFX = _THIS->tmp_nv_3;
+	real_t *delta_xFX = _THIS->ws->delta_xFX;
+	real_t *delta_xFR = _THIS->ws->delta_xFR;
+	real_t *delta_yAC = _THIS->ws->delta_yAC;
+	real_t *delta_yFX = _THIS->ws->delta_yFX;
 
 	/* 1) Determine index arrays. */
 	int* FR_idx;
@@ -1307,7 +1276,7 @@ real_t QProblem_getObjValX( QProblem* _THIS, const real_t* const _x )
 	int nV = QProblem_getNV( _THIS );
 
 	real_t objVal = 0.0;
-	real_t *Hx = _THIS->tmp_nv_1;
+	real_t *Hx = _THIS->ws->Hx;
 
 	if ( nV == 0 )
 		return 0.0;
@@ -2113,7 +2082,7 @@ returnValue QProblemBCPY_setupQPdataFromFile(	QProblem* _THIS, const char* const
 
 
 	/* 1) Load Hessian matrix from file. */
-	real_t *_H = _THIS->tmp_nv_nv;
+	real_t *_H = _THIS->ws->_H;
 
 	if ( H_file != 0 )
 	{
@@ -2431,11 +2400,11 @@ returnValue QProblem_solveInitialQP(	QProblem* _THIS,
 	Bounds *auxiliaryBounds = _THIS->auxiliaryBounds;
 	Constraints *auxiliaryConstraints = _THIS->auxiliaryConstraints;
 
-	real_t *g_original = _THIS->tmp_nv_1;
-	real_t *lb_original = _THIS->tmp_nv_2;
-	real_t *ub_original = _THIS->tmp_nv_3;
-	real_t *lbA_original = _THIS->tmp_nc_1;
-	real_t *ubA_original = _THIS->tmp_nc_2;
+	real_t *g_original = _THIS->ws->g_original;
+	real_t *lb_original = _THIS->ws->lb_original;
+	real_t *ub_original = _THIS->ws->ub_original;
+	real_t *lbA_original = _THIS->ws->lbA_original;
+	real_t *ubA_original = _THIS->ws->ubA_original;
 
 	returnValue returnvalue;
 

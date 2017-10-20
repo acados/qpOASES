@@ -105,16 +105,6 @@ typedef struct
 	real_t *delta_xFRz;				/**< Temporary for determineStepDirection. */
 	real_t *delta_yAC_TMP;			/**< Temporary for determineStepDirection. */
 
-	real_t *tmp_nv_1;
-	real_t *tmp_nv_2;
-	real_t *tmp_nv_3;
-	real_t *tmp_nc_1;
-	real_t *tmp_nc_2;
-	real_t *tmp_nc_3;
-	real_t *tmp_nv_nv;
-	real_t *tmp_nvc_max_1;
-	real_t *tmp_nvc_max_2;
-
 	ConstraintProduct constraintProduct;	/**< Pointer to user-defined constraint product function. */
 
 	real_t tau;						/**< Last homotopy step length. */
@@ -139,7 +129,7 @@ int QProblem_calculateMemorySize( unsigned int nV, unsigned int nC );
 
 char *QProblem_assignMemory( unsigned int nV, unsigned int nC, QProblem **mem, void *raw_memory );
 
-QProblem *QProblem_createMemory( unsigned int nV, unsigned int nC );
+QProblem *kk( unsigned int nV, unsigned int nC );
 
 
 /** Constructor which takes the QP dimension and Hessian type
