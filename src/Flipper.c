@@ -83,11 +83,9 @@ char *Flipper_assignMemory( unsigned int nV, unsigned int nC, Flipper **mem, voi
 	c_ptr = (char *)s_ptr;
 
 	// assign data
-	Bounds *bounds = (*mem)->bounds;
-	c_ptr = Bounds_assignMemory(nV, &bounds, c_ptr);
+	c_ptr = Bounds_assignMemory(nV, &((*mem)->bounds), c_ptr);
 
-	Constraints *constraints = (*mem)->constraints;
-	c_ptr = Constraints_assignMemory(nC, &constraints, c_ptr);
+	c_ptr = Constraints_assignMemory(nC, &((*mem)->constraints), c_ptr);
 
 	(*mem)->R = (real_t *) c_ptr;
 	c_ptr += (nV * nV) * sizeof(real_t);

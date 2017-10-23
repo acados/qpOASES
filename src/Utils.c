@@ -315,7 +315,7 @@ returnValue qpOASES_readFromFileM(	real_t* data, int nrow, int ncol,
 									const char* datafilename
 									)
 {
-	#ifndef __SUPPRESSANYOUTPUT__
+	// #ifndef __SUPPRESSANYOUTPUT__
 
 	int i, j;
 	real_t float_data;
@@ -353,11 +353,11 @@ returnValue qpOASES_readFromFileM(	real_t* data, int nrow, int ncol,
 
 	return SUCCESSFUL_RETURN;
 
-	#else
+	// #else
 
-	return RET_NOT_YET_IMPLEMENTED;
+	// return RET_NOT_YET_IMPLEMENTED;
 
-	#endif /* __SUPPRESSANYOUTPUT__ */
+	// #endif /* __SUPPRESSANYOUTPUT__ */
 }
 
 
@@ -380,7 +380,7 @@ returnValue qpOASES_readFromFileI(	int* data, int n,
 									const char* datafilename
 									)
 {
-	#ifndef __SUPPRESSANYOUTPUT__
+	// #ifndef __SUPPRESSANYOUTPUT__
 
 	int i;
 	FILE* datafile;
@@ -409,11 +409,11 @@ returnValue qpOASES_readFromFileI(	int* data, int n,
 
 	return SUCCESSFUL_RETURN;
 
-    #else
+    // #else
 
-	return RET_NOT_YET_IMPLEMENTED;
+	// return RET_NOT_YET_IMPLEMENTED;
 
-	#endif /* __SUPPRESSANYOUTPUT__ */
+	// #endif /* __SUPPRESSANYOUTPUT__ */
 }
 
 

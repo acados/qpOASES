@@ -58,13 +58,13 @@ int main( )
 	Options_setToMPC( &options );
 	options.printLevel = PL_LOW;
 
-	if ( readOQPdimensions( "./chain80w/", nQP,nV,nC,nEC ) != SUCCESSFUL_RETURN )
+	if ( readOQPdimensions( "/home/bnovoselnik/Software/acados/build/external/qpOASES/bin/chain80w/", &nQP,&nV,&nC,&nEC ) != SUCCESSFUL_RETURN )
 		return THROWERROR( RET_UNABLE_TO_READ_FILE );
 
 	OQPinterface_ws *benchmark_ws = OQPinterface_ws_createMemory(nV, nC, nQP);
 
 	/* 2) Run benchmark. */
-	if ( runOQPbenchmark(	"./chain80w/",
+	if ( runOQPbenchmark(	"/home/bnovoselnik/Software/acados/build/external/qpOASES/bin/chain80w/",
 							isSparse,useHotstarts,
 							&options,maxAllowedNWSR,
 							&maxNWSR,&avgNWSR,&maxCPUtime,&avgCPUtime,

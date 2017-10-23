@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 		maxCPUtime = 300.0;
 		maxAllowedNWSR = 3500;
 
-		if ( readOQPdimensions( OQPproblem, nQP,nV,nC,nEC ) != SUCCESSFUL_RETURN )
+		if ( readOQPdimensions( OQPproblem, &nQP,&nV,&nC,&nEC ) != SUCCESSFUL_RETURN )
 			return THROWERROR( RET_UNABLE_TO_READ_FILE );
 
 		OQPinterface_ws *benchmark_ws = OQPinterface_ws_createMemory(nV, nC, nQP);

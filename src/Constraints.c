@@ -93,23 +93,17 @@ char *Constraints_assignMemory(int n, Constraints **mem, void *raw_memory)
 	c_ptr = (char *)s_ptr;
 
 	// assign data
-	Indexlist *active = (*mem)->active;
-	c_ptr = Indexlist_assignMemory(n, &active, c_ptr);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->active), c_ptr);
 
-	Indexlist *inactive = (*mem)->inactive;
-	c_ptr = Indexlist_assignMemory(n, &inactive, c_ptr);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->inactive), c_ptr);
 
-	Indexlist *shiftedActive = (*mem)->shiftedActive;
-	c_ptr = Indexlist_assignMemory(n, &shiftedActive, c_ptr);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->shiftedActive), c_ptr);
 
-	Indexlist *shiftedInactive = (*mem)->shiftedInactive;
-	c_ptr = Indexlist_assignMemory(n, &shiftedInactive, c_ptr);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->shiftedInactive), c_ptr);
 
-	Indexlist *rotatedActive = (*mem)->rotatedActive;
-	c_ptr = Indexlist_assignMemory(n, &rotatedActive, c_ptr);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->rotatedActive), c_ptr);
 
-	Indexlist *rotatedInactive = (*mem)->rotatedInactive;
-	c_ptr = Indexlist_assignMemory(n, &rotatedInactive, c_ptr);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->rotatedInactive), c_ptr);
 
 	(*mem)->type = (SubjectToType *) c_ptr;
 	c_ptr += n * sizeof(SubjectToType);

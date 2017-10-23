@@ -83,11 +83,9 @@ char *QProblem_ws_assignMemory( unsigned int nV, unsigned int nC, QProblem_ws **
 	c_ptr += sizeof(Constraints);
 
 	// assign data
-	Bounds *auxiliaryBounds = (*mem)->auxiliaryBounds;
-	c_ptr = Bounds_assignMemory(nV, &auxiliaryBounds, c_ptr);
+	c_ptr = Bounds_assignMemory(nV, &((*mem)->auxiliaryBounds), c_ptr);
 
-	Constraints *auxiliaryConstraints = (*mem)->auxiliaryConstraints;
-	c_ptr = Constraints_assignMemory(nC, &auxiliaryConstraints, c_ptr);
+	c_ptr = Constraints_assignMemory(nC, &((*mem)->auxiliaryConstraints), c_ptr);
 
 	(*mem)->ub_new_far = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
 	(*mem)->lb_new_far = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
@@ -277,23 +275,17 @@ char *QProblem_assignMemory( unsigned int nV, unsigned int nC, QProblem **mem, v
 	c_ptr = (char *)s_ptr;
 
 	// assign data
-	QProblem_ws *ws = (*mem)->ws;
-	c_ptr = QProblem_ws_assignMemory(nV, nC, &ws, c_ptr);
+	c_ptr = QProblem_ws_assignMemory(nV, nC, &((*mem)->ws), c_ptr);
 
-	Bounds *bounds = (*mem)->bounds;
-	c_ptr = Bounds_assignMemory(nV, &bounds, c_ptr);
+	c_ptr = Bounds_assignMemory(nV, &((*mem)->bounds), c_ptr);
 
-	Constraints *constraints = (*mem)->constraints;
-	c_ptr = Constraints_assignMemory(nC, &constraints, c_ptr);
+	c_ptr = Constraints_assignMemory(nC, &((*mem)->constraints), c_ptr);
 
-	Flipper *flipper = (*mem)->flipper;
-	c_ptr = Flipper_assignMemory(nV, nC, &flipper, c_ptr);
+	c_ptr = Flipper_assignMemory(nV, nC, &((*mem)->flipper), c_ptr);
 
-	DenseMatrix *H = (*mem)->H;
-	c_ptr = DenseMatrix_assignMemory(nV, nV, &H, c_ptr);
+	c_ptr = DenseMatrix_assignMemory(nV, nV, &((*mem)->H), c_ptr);
 
-	DenseMatrix *A = (*mem)->A;
-	c_ptr = DenseMatrix_assignMemory(nC, nV, &A, c_ptr);
+	c_ptr = DenseMatrix_assignMemory(nC, nV, &((*mem)->A), c_ptr);
 
 	(*mem)->g = (real_t *) c_ptr;
 	c_ptr += nV * sizeof(real_t);
@@ -2622,7 +2614,7 @@ returnValue QProblem_solveInitialQP(	QProblem* _THIS,
 
 	/* 3) Obtain linear independent working set for auxiliary QP. */
 	if ( QProblem_obtainAuxiliaryWorkingSet(	_THIS,xOpt,yOpt,guessedBounds,guessedConstraints,
-												&auxiliaryBounds,&auxiliaryConstraints ) != SUCCESSFUL_RETURN )
+												auxiliaryBounds,auxiliaryConstraints ) != SUCCESSFUL_RETURN )
 		return THROWERROR( RET_INIT_FAILED );
 
 	/* 4) Setup working set of auxiliary QP and setup matrix factorisations. */
@@ -2638,7 +2630,7 @@ returnValue QProblem_solveInitialQP(	QProblem* _THIS,
 		return THROWERROR( RET_INIT_FAILED_TQ );
 
 	/* c) Working set of auxiliary QP. */
-	if ( QProblem_setupAuxiliaryWorkingSet( _THIS,&auxiliaryBounds,&auxiliaryConstraints,BT_TRUE ) != SUCCESSFUL_RETURN )
+	if ( QProblem_setupAuxiliaryWorkingSet( _THIS,auxiliaryBounds,auxiliaryConstraints,BT_TRUE ) != SUCCESSFUL_RETURN )
 		return THROWERROR( RET_INIT_FAILED );
 
 	/* d) Copy external Cholesky factor if provided */
@@ -2689,7 +2681,7 @@ returnValue QProblem_solveInitialQP(	QProblem* _THIS,
 	if ( QProblem_setupAuxiliaryQPgradient( _THIS ) != SUCCESSFUL_RETURN )
 		return THROWERROR( RET_INIT_FAILED );
 
-	if ( QProblem_setupAuxiliaryQPbounds( _THIS,&auxiliaryBounds,&auxiliaryConstraints,BT_TRUE ) != SUCCESSFUL_RETURN )
+	if ( QProblem_setupAuxiliaryQPbounds( _THIS,auxiliaryBounds,auxiliaryConstraints,BT_TRUE ) != SUCCESSFUL_RETURN )
 		return THROWERROR( RET_INIT_FAILED );
 
 	_THIS->status = QPS_AUXILIARYQPSOLVED;

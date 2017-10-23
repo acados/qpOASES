@@ -64,6 +64,7 @@ int main( )
 	int nWSR;
 	real_t xOpt[2];
 	real_t yOpt[2+1];
+	real_t objVal;
 
 	QProblemCON( example,2,1,HST_UNKNOWN );
 	Options_setToDefault( &options );
@@ -76,8 +77,9 @@ int main( )
 	/* Get and print solution of first QP. */
 	QProblem_getPrimalSolution( example,xOpt );
 	QProblem_getDualSolution(   example,yOpt );
+	objVal = QProblem_getObjVal( example );
 	printf( "\nxOpt = [ %e, %e ];  yOpt = [ %e, %e, %e ];  objVal = %e\n\n",
-			xOpt[0],xOpt[1],yOpt[0],yOpt[1],yOpt[2], QProblem_getObjVal( example ) );
+			xOpt[0],xOpt[1],yOpt[0],yOpt[1],yOpt[2], objVal );
 
 	/* Solve second QP. */
 	nWSR = 10;
@@ -86,8 +88,9 @@ int main( )
 	/* Get and print solution of second QP. */
 	QProblem_getPrimalSolution( example,xOpt );
 	QProblem_getDualSolution(   example,yOpt );
+	objVal = QProblem_getObjVal( example );
 	printf( "\nxOpt = [ %e, %e ];  yOpt = [ %e, %e, %e ];  objVal = %e\n\n",
-			xOpt[0],xOpt[1],yOpt[0],yOpt[1],yOpt[2], QProblem_getObjVal( example ) );
+			xOpt[0],xOpt[1],yOpt[0],yOpt[1],yOpt[2], objVal );
 
 	QProblem_printOptions( example );
 	/*QProblem_printProperties( example );*/

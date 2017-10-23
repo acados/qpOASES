@@ -93,23 +93,17 @@ char *Bounds_assignMemory(int n, Bounds **mem, void *raw_memory)
 	c_ptr = (char *)s_ptr;
 
 	// assign data
-	Indexlist *freee = (*mem)->freee;
-	c_ptr = Indexlist_assignMemory(n, &freee, c_ptr);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->freee), c_ptr);
 
-	Indexlist *fixed = (*mem)->fixed;
-	c_ptr = Indexlist_assignMemory(n, &fixed, c_ptr);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->fixed), c_ptr);
 
-	Indexlist *shiftedFreee = (*mem)->shiftedFreee;
-	c_ptr = Indexlist_assignMemory(n, &shiftedFreee, c_ptr);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->shiftedFreee), c_ptr);
 
-	Indexlist *shiftedFixed = (*mem)->shiftedFixed;
-	c_ptr = Indexlist_assignMemory(n, &shiftedFixed, c_ptr);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->shiftedFixed), c_ptr);
 
-	Indexlist *rotatedFreee = (*mem)->rotatedFreee;
-	c_ptr = Indexlist_assignMemory(n, &rotatedFreee, c_ptr);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->rotatedFreee), c_ptr);
 
-	Indexlist *rotatedFixed = (*mem)->rotatedFixed;
-	c_ptr = Indexlist_assignMemory(n, &rotatedFixed, c_ptr);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->rotatedFixed), c_ptr);
 
 	(*mem)->type = (SubjectToType *) c_ptr;
 	c_ptr += n * sizeof(SubjectToType);
