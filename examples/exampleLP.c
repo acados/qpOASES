@@ -57,27 +57,27 @@ int main( )
 
 
 	/* Setting up QProblem object with zero Hessian matrix. */
-	static QProblem example;
+	QProblem *example = QProblem_createMemory(2, 1);
 	static Options options;
-	
+
 	int nWSR;
 	real_t xOpt[2];
 
-	QProblemCON( &example,2,1,HST_ZERO );
+	QProblemCON( example,2,1,HST_ZERO );
 	Options_setToDefault( &options );
-	QProblem_setOptions( &example,options );
+	QProblem_setOptions( example,options );
 
 	/* Solve first LP. */
 	nWSR = 10;
-	QProblem_init( &example, 0,g,A,lb,ub,lbA,ubA, &nWSR,0 );
+	QProblem_init( example, 0,g,A,lb,ub,lbA,ubA, &nWSR,0 );
 
 	/* Solve second LP. */
 	nWSR = 10;
-	QProblem_hotstart( &example,g_new,lb_new,ub_new,lbA_new,ubA_new, &nWSR,0 );
+	QProblem_hotstart( example,g_new,lb_new,ub_new,lbA_new,ubA_new, &nWSR,0 );
 
 	/* Get and print solution of second LP. */
-	QProblem_getPrimalSolution( &example,xOpt );
-	printf( "\nxOpt = [ %e, %e ];  objVal = %e\n\n", xOpt[0],xOpt[1],QProblem_getObjVal(&example) );
+	QProblem_getPrimalSolution( example,xOpt );
+	printf( "\nxOpt = [ %e, %e ];  objVal = %e\n\n", xOpt[0],xOpt[1],QProblem_getObjVal(example) );
 
 	return 0;
 }

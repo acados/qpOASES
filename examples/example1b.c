@@ -53,36 +53,38 @@ int main( )
 
 
 	/* Setting up QProblemB object. */
-	static QProblemB example;
+	QProblemB *example = QProblemB_createMemory(2);
 	static Options options;
 
 	int nWSR = 10;
 	real_t xOpt[2];
 
-	QProblemBCON( &example,2,HST_UNKNOWN );
+	QProblemBCON( example,2,HST_UNKNOWN );
 	Options_setToDefault( &options );
 	/* options.enableFlippingBounds = BT_FALSE; */
 	options.initialStatusBounds = ST_INACTIVE;
 	options.numRefinementSteps = 1;
 	/* options.enableCholeskyRefactorisation = 1; */
-	QProblemB_setOptions( &example,options );
+	QProblemB_setOptions( example,options );
 
 
 	/* Solve first QP. */
 	nWSR = 10;
-	QProblemB_init( &example,H,g,lb,ub, &nWSR,0 );
+	QProblemB_init( example,H,g,lb,ub, &nWSR,0 );
 
 	/* Get and print solution of second QP. */
-	QProblemB_getPrimalSolution( &example,xOpt );
-	printf( "\nxOpt = [ %e, %e ];  objVal = %e\n\n", xOpt[0],xOpt[1],QProblemB_getObjVal(&example) );
-	
+	QProblemB_getPrimalSolution( example,xOpt );
+	printf( "\nxOpt = [ %e, %e ];  objVal = %e\n\n", xOpt[0],xOpt[1],QProblemB_getObjVal(example) );
+
 	/* Solve second QP. */
 	nWSR = 10;
-	QProblemB_hotstart( &example,g_new,lb_new,ub_new, &nWSR,0 );
+	QProblemB_hotstart( example,g_new,lb_new,ub_new, &nWSR,0 );
 
 	/* Get and print solution of second QP. */
-	QProblemB_getPrimalSolution( &example,xOpt );
-	printf( "\nxOpt = [ %e, %e ];  objVal = %e\n\n", xOpt[0],xOpt[1],QProblemB_getObjVal(&example) );
+	QProblemB_getPrimalSolution( example,xOpt );
+	printf( "\nxOpt = [ %e, %e ];  objVal = %e\n\n", xOpt[0],xOpt[1],QProblemB_getObjVal(example) );
+
+	free(example);
 
 	return 0;
 }

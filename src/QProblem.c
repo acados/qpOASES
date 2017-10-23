@@ -89,117 +89,116 @@ char *QProblem_ws_assignMemory( unsigned int nV, unsigned int nC, QProblem_ws **
 	Constraints *auxiliaryConstraints = (*mem)->auxiliaryConstraints;
 	c_ptr = Constraints_assignMemory(nC, &auxiliaryConstraints, c_ptr);
 
-	real_t *ub_new_far = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *lb_new_far = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *ubA_new_far = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
-	real_t *lbA_new_far = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->ub_new_far = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->lb_new_far = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->ubA_new_far = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->lbA_new_far = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
 
-	real_t *g_new = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *lb_new = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *ub_new = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *lbA_new = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
-	real_t *ubA_new = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->g_new = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->lb_new = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->ub_new = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->lbA_new = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->ubA_new = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
 
-	real_t *g_new2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *lb_new2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *ub_new2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *lbA_new2 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
-	real_t *ubA_new2 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->g_new2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->lb_new2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->ub_new2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->lbA_new2 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->ubA_new2 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
 
-	real_t *delta_xFX5 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *delta_xFR5 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *delta_yAC5 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
-	real_t *delta_yFX5 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->delta_xFX5 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->delta_xFR5 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->delta_yAC5 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->delta_yFX5 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
 
-	real_t *Hx = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->Hx = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
 
-	real_t *_H = (real_t *) c_ptr; c_ptr += (nV * nV)*sizeof(real_t);
+	(*mem)->_H = (real_t *) c_ptr; c_ptr += (nV * nV)*sizeof(real_t);
 
-	real_t *g_original = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *lb_original = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *ub_original = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *lbA_original = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
-	real_t *ubA_original = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->g_original = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->lb_original = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->ub_original = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->lbA_original = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->ubA_original = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
 
-	real_t *delta_xFR = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *delta_xFX = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *delta_yAC = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
-	real_t *delta_yFX = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *delta_g = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *delta_lb = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *delta_ub = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *delta_lbA = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
-	real_t *delta_ubA = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->delta_xFR = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->delta_xFX = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->delta_yAC = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->delta_yFX = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->delta_g = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->delta_lb = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->delta_ub = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->delta_lbA = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->delta_ubA = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
 
-	real_t *gMod = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->gMod = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
 
-	real_t *aFR = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *wZ = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->aFR = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->wZ = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
 
-	real_t *delta_g2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *delta_xFX2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *delta_xFR2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *delta_yAC2 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t); //
-	real_t *delta_yFX2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *nul = (real_t *) c_ptr; c_ptr += (nVC_max)*sizeof(real_t);
-	real_t *Arow = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->delta_g2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->delta_xFX2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->delta_xFR2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->delta_yAC2 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t); //
+	(*mem)->delta_yFX2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->nul = (real_t *) c_ptr; c_ptr += (nVC_max)*sizeof(real_t);
+	(*mem)->Arow = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
 
-	real_t *xiC = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
-	real_t *xiC_TMP = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
-	real_t *xiB = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *Arow2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *num = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->xiC = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->xiC_TMP = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->xiB = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->Arow2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->num = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
 
-	real_t *w = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *tmp = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->w = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->tmp = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
 
-	real_t *delta_g3 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *delta_xFX3 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *delta_xFR3 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *delta_yAC3 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t); //
-	real_t *delta_yFX3 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *nul2 = (real_t *) c_ptr; c_ptr += (nVC_max)*sizeof(real_t); //
+	(*mem)->delta_g3 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->delta_xFX3 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->delta_xFR3 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->delta_yAC3 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t); //
+	(*mem)->delta_yFX3 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->nul2 = (real_t *) c_ptr; c_ptr += (nVC_max)*sizeof(real_t); //
 
-	real_t *xiC2 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t); //
-	real_t *xiC_TMP2 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t); //
-	real_t *xiB2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *num2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->xiC2 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t); //
+	(*mem)->xiC_TMP2 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t); //
+	(*mem)->xiB2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->num2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
 
-	real_t *Hz = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *z = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *ZHz = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *r = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->Hz = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->z = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->ZHz = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->r = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
 
-	real_t *tmp2 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t); //
-	real_t *Hz2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *z2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *r2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *rhs = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->tmp2 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t); //
+	(*mem)->Hz2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->z2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->r2 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->rhs = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
 
-	real_t *delta_xFX4 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *delta_xFR4 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *delta_yAC4 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t); //
-	real_t *delta_yFX4 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
-	real_t *nul3 = (real_t *) c_ptr; c_ptr += (nVC_max)*sizeof(real_t); //
-	real_t *ek = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *x_W = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *As = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
-	real_t *Ax_W = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->delta_xFX4 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->delta_xFR4 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->delta_yAC4 = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t); //
+	(*mem)->delta_yFX4 = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t); //
+	(*mem)->nul3 = (real_t *) c_ptr; c_ptr += (nVC_max)*sizeof(real_t); //
+	(*mem)->ek = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->x_W = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->As = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->Ax_W = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
 
-	real_t *num3 = (real_t *) c_ptr; c_ptr += (nVC_max)*sizeof(real_t); //
-	real_t *den = (real_t *) c_ptr; c_ptr += (nVC_max)*sizeof(real_t);
-	real_t *delta_Ax_l = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
-	real_t *delta_Ax_u = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
-	real_t *delta_Ax = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
-	real_t *delta_x = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->num3 = (real_t *) c_ptr; c_ptr += (nVC_max)*sizeof(real_t); //
+	(*mem)->den = (real_t *) c_ptr; c_ptr += (nVC_max)*sizeof(real_t);
+	(*mem)->delta_Ax_l = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->delta_Ax_u = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->delta_Ax = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->delta_x = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
 
-	real_t *_A = (real_t *) c_ptr; c_ptr += (nC*nV)*sizeof(real_t);
+	(*mem)->_A = (real_t *) c_ptr; c_ptr += (nC*nV)*sizeof(real_t);
 
-	real_t *grad = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
-	real_t *AX = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
+	(*mem)->grad = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
+	(*mem)->AX = (real_t *) c_ptr; c_ptr += (nC)*sizeof(real_t);
 
 	return c_ptr;
-
 }
 
 QProblem_ws *QProblem_ws_createMemory( unsigned int nV, unsigned int nC )
@@ -220,8 +219,8 @@ int QProblem_calculateMemorySize( unsigned int nV, unsigned int nC )
 	int size = 0;
 	size += sizeof(QProblem);  					  	   // size of structure itself
 	size += QProblem_ws_calculateMemorySize(nV, nC);   // size of the workspace
-	size += Bounds_calculateMemorySize(nV);		   // bounds
-	size += Constraints_calculateMemorySize(nC);   // constraints
+	size += Bounds_calculateMemorySize(nV);		       // bounds
+	size += Constraints_calculateMemorySize(nC);       // constraints
 	size += Flipper_calculateMemorySize(nV, nC);       // flipper
 	size += DenseMatrix_calculateMemorySize(nV, nV);   // H
 	size += DenseMatrix_calculateMemorySize(nC, nV);   // A
@@ -457,8 +456,7 @@ void QProblemCPY(	QProblem* FROM,
 	unsigned int _nC = (unsigned int)QProblem_getNC( FROM );
 	unsigned int _nVC_min = (_nV < _nC) ? _nV : _nC;
 
-	TO->bounds = FROM->bounds;
-
+	BoundsCPY(FROM->bounds, TO->bounds);
 	DenseMatrixCPY(FROM->H, TO->H);
 
 	QProblem_setG( TO,FROM->g );
@@ -3243,7 +3241,6 @@ returnValue QProblem_computeProjectedCholesky( QProblem* _THIS )
 	int nV  = QProblem_getNV( _THIS );
 	int nZ  = QProblem_getNZ( _THIS );
 	int nFR = QProblem_getNFR( _THIS );
-	int nV = QProblem_getNV( _THIS );
 
 	int *FR_idx, *AC_idx;
 

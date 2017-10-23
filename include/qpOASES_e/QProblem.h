@@ -226,6 +226,7 @@ typedef struct
 
 	real_t tau;						/**< Last homotopy step length. */
 	real_t regVal;					/**< Holds the offset used to regularise Hessian matrix (zero by default). */
+
 	real_t ramp0;					/**< Start value for Ramping Strategy. */
 	real_t ramp1;					/**< Final value for Ramping Strategy. */
 
