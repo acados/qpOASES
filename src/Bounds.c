@@ -70,22 +70,28 @@ char *Bounds_assignMemory(int n, Bounds **mem, void *raw_memory)
 	c_ptr += sizeof(Bounds);
 
 	(*mem)->freee = (Indexlist *) c_ptr;
-	c_ptr += sizeof(Indexlist);
+	// c_ptr += sizeof(Indexlist);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->freee), c_ptr);
 
 	(*mem)->fixed = (Indexlist *) c_ptr;
-	c_ptr += sizeof(Indexlist);
+	// c_ptr += sizeof(Indexlist);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->fixed), c_ptr);
 
 	(*mem)->shiftedFreee = (Indexlist *) c_ptr;
-	c_ptr += sizeof(Indexlist);
+	// c_ptr += sizeof(Indexlist);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->shiftedFreee), c_ptr);
 
 	(*mem)->shiftedFixed = (Indexlist *) c_ptr;
-	c_ptr += sizeof(Indexlist);
+	// c_ptr += sizeof(Indexlist);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->shiftedFixed), c_ptr);
 
 	(*mem)->rotatedFreee = (Indexlist *) c_ptr;
-	c_ptr += sizeof(Indexlist);
+	// c_ptr += sizeof(Indexlist);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->rotatedFreee), c_ptr);
 
 	(*mem)->rotatedFixed = (Indexlist *) c_ptr;
-	c_ptr += sizeof(Indexlist);
+	// c_ptr += sizeof(Indexlist);
+	c_ptr = Indexlist_assignMemory(n, &((*mem)->rotatedFixed), c_ptr);
 
 	// align memory to typical cache line size
     size_t s_ptr = (size_t)c_ptr;
@@ -93,18 +99,6 @@ char *Bounds_assignMemory(int n, Bounds **mem, void *raw_memory)
 	c_ptr = (char *)s_ptr;
 
 	// assign data
-	c_ptr = Indexlist_assignMemory(n, &((*mem)->freee), c_ptr);
-
-	c_ptr = Indexlist_assignMemory(n, &((*mem)->fixed), c_ptr);
-
-	c_ptr = Indexlist_assignMemory(n, &((*mem)->shiftedFreee), c_ptr);
-
-	c_ptr = Indexlist_assignMemory(n, &((*mem)->shiftedFixed), c_ptr);
-
-	c_ptr = Indexlist_assignMemory(n, &((*mem)->rotatedFreee), c_ptr);
-
-	c_ptr = Indexlist_assignMemory(n, &((*mem)->rotatedFixed), c_ptr);
-
 	(*mem)->type = (SubjectToType *) c_ptr;
 	c_ptr += n * sizeof(SubjectToType);
 

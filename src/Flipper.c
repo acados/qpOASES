@@ -72,10 +72,12 @@ char *Flipper_assignMemory( unsigned int nV, unsigned int nC, Flipper **mem, voi
 	c_ptr += sizeof(Flipper);
 
 	(*mem)->bounds = (Bounds *) c_ptr;
-	c_ptr += sizeof(Bounds);
+	// c_ptr += sizeof(Bounds);
+	c_ptr = Bounds_assignMemory(nV, &((*mem)->bounds), c_ptr);
 
 	(*mem)->constraints = (Constraints *) c_ptr;
-	c_ptr += sizeof(Constraints);
+	// c_ptr += sizeof(Constraints);
+	c_ptr = Constraints_assignMemory(nC, &((*mem)->constraints), c_ptr);
 
 	// align memory to typical cache line size
     size_t s_ptr = (size_t)c_ptr;
@@ -83,10 +85,6 @@ char *Flipper_assignMemory( unsigned int nV, unsigned int nC, Flipper **mem, voi
 	c_ptr = (char *)s_ptr;
 
 	// assign data
-	c_ptr = Bounds_assignMemory(nV, &((*mem)->bounds), c_ptr);
-
-	c_ptr = Constraints_assignMemory(nC, &((*mem)->constraints), c_ptr);
-
 	(*mem)->R = (real_t *) c_ptr;
 	c_ptr += (nV * nV) * sizeof(real_t);
 

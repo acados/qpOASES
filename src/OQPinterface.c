@@ -59,64 +59,36 @@ int OQPbenchmark_ws_calculateMemorySize( unsigned int nV, unsigned int nC )
 
 char *OQPbenchmark_ws_assignMemory( unsigned int nV, unsigned int nC, OQPbenchmark_ws **mem, void *raw_memory )
 {
-	char *start_ptr;
-
 	// char pointer
 	char *c_ptr = (char *)raw_memory;
-
-	char *start_ptr2 = c_ptr;
 
 	// assign structures
 	*mem = (OQPbenchmark_ws *) c_ptr;
 	c_ptr += sizeof(OQPbenchmark_ws);
 
 	(*mem)->qp = (QProblem *) c_ptr;
-	c_ptr += sizeof(QProblem);
+	// c_ptr += sizeof(QProblem);
+	c_ptr = QProblem_assignMemory(nV, nC, &((*mem)->qp), c_ptr);
 
 	(*mem)->H = (DenseMatrix *) c_ptr;
-	c_ptr += sizeof(DenseMatrix);
+	// c_ptr += sizeof(DenseMatrix);
+	c_ptr = DenseMatrix_assignMemory(nV, nV, &((*mem)->H), c_ptr);
 
 	(*mem)->A = (DenseMatrix *) c_ptr;
-	c_ptr += sizeof(DenseMatrix);
+	// c_ptr += sizeof(DenseMatrix);
+	c_ptr = DenseMatrix_assignMemory(nC, nV, &((*mem)->A), c_ptr);
 
 	// align memory to typical cache line size
     size_t s_ptr = (size_t)c_ptr;
     s_ptr = (s_ptr + 63) / 64 * 64;
 	c_ptr = (char *)s_ptr;
 
-	printf(">>>>> %d\n", start_ptr2 + OQPbenchmark_ws_calculateMemorySize(nV,nC) - c_ptr);
-
 	// assign data
-	start_ptr = c_ptr;
-	c_ptr = QProblem_assignMemory(nV, nC, &((*mem)->qp), c_ptr);
-	printf("====> %d\n", (char*)start_ptr + QProblem_calculateMemorySize(nV,nC) - c_ptr);
-	assert((char*)start_ptr + QProblem_calculateMemorySize(nV,nC) >= c_ptr);
-
-	printf(">>>>> %d\n", start_ptr2 + OQPbenchmark_ws_calculateMemorySize(nV,nC) - c_ptr);
-
-	start_ptr = c_ptr;
-	c_ptr = DenseMatrix_assignMemory(nV, nV, &((*mem)->H), c_ptr);
-	printf("====> %d\n", (char*)start_ptr + DenseMatrix_calculateMemorySize(nV,nV) - c_ptr);
-	assert((char*)start_ptr + DenseMatrix_calculateMemorySize(nV,nV) >= c_ptr);
-
-	printf(">>>>> %d\n", start_ptr2 + OQPbenchmark_ws_calculateMemorySize(nV,nC) - c_ptr);
-
-	start_ptr = c_ptr;
-	c_ptr = DenseMatrix_assignMemory(nC, nV, &((*mem)->A), c_ptr);
-	printf("====> %d\n", (char*)start_ptr + DenseMatrix_calculateMemorySize(nC,nV) - c_ptr);
-	assert((char*)start_ptr + DenseMatrix_calculateMemorySize(nC,nV) >= c_ptr);
-
-	printf(">>>>> %d\n", start_ptr2 + OQPbenchmark_ws_calculateMemorySize(nV,nC) - c_ptr);
-
 	(*mem)->x = (real_t *) c_ptr;
 	c_ptr += nV * sizeof(real_t);
 
-	printf(">>>>> %d\n", start_ptr2 + OQPbenchmark_ws_calculateMemorySize(nV,nC) - c_ptr);
-
 	(*mem)->y = (real_t *) c_ptr;
 	c_ptr += (nV + nC) * sizeof(real_t);
-
-	printf(">>>>> %d\n", start_ptr2 + OQPbenchmark_ws_calculateMemorySize(nV,nC) - c_ptr);
 
 	return c_ptr;
 }
@@ -148,8 +120,6 @@ int OQPbenchmarkB_ws_calculateMemorySize( unsigned int nV )
 
 char *OQPbenchmarkB_ws_assignMemory( unsigned int nV, OQPbenchmarkB_ws **mem, void *raw_memory )
 {
-	char *start_ptr;
-
 	// char pointer
 	char *c_ptr = (char *)raw_memory;
 
@@ -158,10 +128,12 @@ char *OQPbenchmarkB_ws_assignMemory( unsigned int nV, OQPbenchmarkB_ws **mem, vo
 	c_ptr += sizeof(OQPbenchmarkB_ws);
 
 	(*mem)->qp = (QProblemB *) c_ptr;
-	c_ptr += sizeof(QProblemB);
+	// c_ptr += sizeof(QProblemB);
+	c_ptr = QProblemB_assignMemory(nV, &((*mem)->qp), c_ptr);
 
 	(*mem)->H = (DenseMatrix *) c_ptr;
-	c_ptr += sizeof(DenseMatrix);
+	// c_ptr += sizeof(DenseMatrix);
+	c_ptr = DenseMatrix_assignMemory(nV, nV, &((*mem)->H), c_ptr);
 
 	// align memory to typical cache line size
     size_t s_ptr = (size_t)c_ptr;
@@ -169,14 +141,6 @@ char *OQPbenchmarkB_ws_assignMemory( unsigned int nV, OQPbenchmarkB_ws **mem, vo
 	c_ptr = (char *)s_ptr;
 
 	// assign data
-	start_ptr = c_ptr;
-	c_ptr = QProblemB_assignMemory(nV, &((*mem)->qp), c_ptr);
-	assert((char*)start_ptr + QProblemB_calculateMemorySize(nV) >= c_ptr);
-
-	start_ptr = c_ptr;
-	c_ptr = DenseMatrix_assignMemory(nV, nV, &((*mem)->H), c_ptr);
-	assert((char*)start_ptr + DenseMatrix_calculateMemorySize(nV,nV) >= c_ptr);
-
 	(*mem)->x = (real_t *) c_ptr;
 	c_ptr += nV * sizeof(real_t);
 
@@ -218,8 +182,6 @@ int OQPinterface_ws_calculateMemorySize( unsigned int nV, unsigned int nC, unsig
 
 char *OQPinterface_ws_assignMemory( unsigned int nV, unsigned int nC, unsigned int nQP, OQPinterface_ws **mem, void *raw_memory )
 {
-	char *start_ptr;
-
 	// char pointer
 	char *c_ptr = (char *)raw_memory;
 
@@ -228,10 +190,12 @@ char *OQPinterface_ws_assignMemory( unsigned int nV, unsigned int nC, unsigned i
 	c_ptr += sizeof(OQPinterface_ws);
 
 	(*mem)->qp_ws = (OQPbenchmark_ws *) c_ptr;
-	c_ptr += sizeof(OQPbenchmark_ws);
+	// c_ptr += sizeof(OQPbenchmark_ws);
+	c_ptr = OQPbenchmark_ws_assignMemory(nV, nC, &((*mem)->qp_ws), c_ptr);
 
 	(*mem)->qpB_ws = (OQPbenchmarkB_ws *) c_ptr;
-	c_ptr += sizeof(OQPbenchmarkB_ws);
+	// c_ptr += sizeof(OQPbenchmarkB_ws);
+	c_ptr = OQPbenchmarkB_ws_assignMemory(nV, &((*mem)->qpB_ws), c_ptr);
 
 	// align memory to typical cache line size
     size_t s_ptr = (size_t)c_ptr;
@@ -239,15 +203,6 @@ char *OQPinterface_ws_assignMemory( unsigned int nV, unsigned int nC, unsigned i
 	c_ptr = (char *)s_ptr;
 
 	// assign data
-	start_ptr = c_ptr;
-	c_ptr = OQPbenchmark_ws_assignMemory(nV, nC, &((*mem)->qp_ws), c_ptr);
-	printf("====> %d", (char*)start_ptr + OQPbenchmark_ws_calculateMemorySize(nV,nC) - c_ptr);
-	assert((char*)start_ptr + OQPbenchmark_ws_calculateMemorySize(nV,nC) >= c_ptr);
-
-	start_ptr = c_ptr;
-	c_ptr = OQPbenchmarkB_ws_assignMemory(nV, &((*mem)->qpB_ws), c_ptr);
-	assert((char*)start_ptr + OQPbenchmarkB_ws_calculateMemorySize(nV) >= c_ptr);
-
 	(*mem)->H = (real_t *) c_ptr;
 	c_ptr += (nV * nV) * sizeof(real_t);
 

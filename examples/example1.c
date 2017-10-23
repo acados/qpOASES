@@ -40,6 +40,8 @@ int main( )
 {
 	USING_NAMESPACE_QPOASES
 
+	real_t stat, feas, cmpl;
+
 	/* Setup data of first QP. */
 	real_t H[2*2] = { 1.0, 0.0, 0.0, 0.5 };
 	real_t A[1*2] = { 1.0, 1.0 };
@@ -81,6 +83,10 @@ int main( )
 	printf( "\nxOpt = [ %e, %e ];  yOpt = [ %e, %e, %e ];  objVal = %e\n\n",
 			xOpt[0],xOpt[1],yOpt[0],yOpt[1],yOpt[2], objVal );
 
+	qpOASES_getKktViolation( 2,1, H,g,A,lb,ub,lbA,ubA, xOpt,yOpt, &stat,&feas,&cmpl );
+	printf("KKT violations:\n\n");
+	printf("stat = %e, feas = %e, cmpl = %e\n\n", stat, feas, cmpl);
+
 	/* Solve second QP. */
 	nWSR = 10;
 	QProblem_hotstart( example,g_new,lb_new,ub_new,lbA_new,ubA_new, &nWSR,0 );
@@ -91,6 +97,10 @@ int main( )
 	objVal = QProblem_getObjVal( example );
 	printf( "\nxOpt = [ %e, %e ];  yOpt = [ %e, %e, %e ];  objVal = %e\n\n",
 			xOpt[0],xOpt[1],yOpt[0],yOpt[1],yOpt[2], objVal );
+
+	qpOASES_getKktViolation( 2,1, H,g_new,A,lb_new,ub_new,lbA_new,ubA_new, xOpt,yOpt, &stat,&feas,&cmpl );
+	printf("KKT violations:\n\n");
+	printf("stat = %e, feas = %e, cmpl = %e\n\n", stat, feas, cmpl);
 
 	QProblem_printOptions( example );
 	/*QProblem_printProperties( example );*/

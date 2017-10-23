@@ -64,10 +64,12 @@ char *QProblemB_ws_assignMemory( unsigned int nV, QProblemB_ws **mem, void *raw_
 	c_ptr += sizeof(QProblemB_ws);
 
 	(*mem)->emptyBounds = (Bounds *) c_ptr;
-	c_ptr += sizeof(Bounds);
+	// c_ptr += sizeof(Bounds);
+	c_ptr = Bounds_assignMemory(nV, &((*mem)->emptyBounds), c_ptr);
 
 	(*mem)->auxiliaryBounds = (Bounds *) c_ptr;
-	c_ptr += sizeof(Bounds);
+	// c_ptr += sizeof(Bounds);
+	c_ptr = Bounds_assignMemory(nV, &((*mem)->auxiliaryBounds), c_ptr);
 
 	// align memory to typical cache line size
     size_t s_ptr = (size_t)c_ptr;
@@ -75,10 +77,6 @@ char *QProblemB_ws_assignMemory( unsigned int nV, QProblemB_ws **mem, void *raw_
 	c_ptr = (char *)s_ptr;
 
 	// assign data
-	c_ptr = Bounds_assignMemory(nV, &((*mem)->emptyBounds), c_ptr);
-
-	c_ptr = Bounds_assignMemory(nV, &((*mem)->auxiliaryBounds), c_ptr);
-
 	(*mem)->ub_new_far = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
 	(*mem)->lb_new_far = (real_t *) c_ptr; c_ptr += (nV)*sizeof(real_t);
 
@@ -154,16 +152,20 @@ char *QProblemB_assignMemory( unsigned int nV, QProblemB **mem, void *raw_memory
 	c_ptr += sizeof(QProblemB);
 
 	(*mem)->ws = (QProblemB_ws *) c_ptr;
-	c_ptr += sizeof(QProblemB_ws);
+	// c_ptr += sizeof(QProblemB_ws);
+	c_ptr = QProblemB_ws_assignMemory(nV, &((*mem)->ws), c_ptr);
 
 	(*mem)->bounds = (Bounds *) c_ptr;
-	c_ptr += sizeof(Bounds);
+	// c_ptr += sizeof(Bounds);
+	c_ptr = Bounds_assignMemory(nV, &((*mem)->bounds), c_ptr);
 
 	(*mem)->flipper = (Flipper *) c_ptr;
-	c_ptr += sizeof(Flipper);
+	// c_ptr += sizeof(Flipper);
+	c_ptr = Flipper_assignMemory(nV, 0, &((*mem)->flipper), c_ptr);
 
 	(*mem)->H = (DenseMatrix *) c_ptr;
-	c_ptr += sizeof(DenseMatrix);
+	// c_ptr += sizeof(DenseMatrix);
+	c_ptr = DenseMatrix_assignMemory(nV, nV, &((*mem)->H), c_ptr);
 
 	// align memory to typical cache line size
     size_t s_ptr = (size_t)c_ptr;
@@ -171,14 +173,6 @@ char *QProblemB_assignMemory( unsigned int nV, QProblemB **mem, void *raw_memory
 	c_ptr = (char *)s_ptr;
 
 	// assign data
-	c_ptr = QProblemB_ws_assignMemory(nV, &((*mem)->ws), c_ptr);
-
-	c_ptr = Bounds_assignMemory(nV, &((*mem)->bounds), c_ptr);
-
-	c_ptr = Flipper_assignMemory(nV, 0, &((*mem)->flipper), c_ptr);
-
-	c_ptr = DenseMatrix_assignMemory(nV, nV, &((*mem)->H), c_ptr);
-
 	(*mem)->g = (real_t *) c_ptr;
 	c_ptr += nV * sizeof(real_t);
 
