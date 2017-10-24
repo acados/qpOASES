@@ -70,27 +70,21 @@ char *Constraints_assignMemory(int n, Constraints **mem, void *raw_memory)
 	c_ptr += sizeof(Constraints);
 
 	(*mem)->active = (Indexlist *) c_ptr;
-	// c_ptr += sizeof(Indexlist);
 	c_ptr = Indexlist_assignMemory(n, &((*mem)->active), c_ptr);
 
 	(*mem)->inactive = (Indexlist *) c_ptr;
-	// c_ptr += sizeof(Indexlist);
 	c_ptr = Indexlist_assignMemory(n, &((*mem)->inactive), c_ptr);
 
 	(*mem)->shiftedActive = (Indexlist *) c_ptr;
-	// c_ptr += sizeof(Indexlist);
 	c_ptr = Indexlist_assignMemory(n, &((*mem)->shiftedActive), c_ptr);
 
 	(*mem)->shiftedInactive = (Indexlist *) c_ptr;
-	// c_ptr += sizeof(Indexlist);
 	c_ptr = Indexlist_assignMemory(n, &((*mem)->shiftedInactive), c_ptr);
 
 	(*mem)->rotatedActive = (Indexlist *) c_ptr;
-	// c_ptr += sizeof(Indexlist);
 	c_ptr = Indexlist_assignMemory(n, &((*mem)->rotatedActive), c_ptr);
 
 	(*mem)->rotatedInactive = (Indexlist *) c_ptr;
-	// c_ptr += sizeof(Indexlist);
 	c_ptr = Indexlist_assignMemory(n, &((*mem)->rotatedInactive), c_ptr);
 
 	// align memory to typical cache line size

@@ -77,11 +77,9 @@ char *QProblem_ws_assignMemory( unsigned int nV, unsigned int nC, QProblem_ws **
 	c_ptr += sizeof(QProblem_ws);
 
 	(*mem)->auxiliaryBounds = (Bounds *) c_ptr;
-	// c_ptr += sizeof(Bounds);
 	c_ptr = Bounds_assignMemory(nV, &((*mem)->auxiliaryBounds), c_ptr);
 
 	(*mem)->auxiliaryConstraints = (Constraints *) c_ptr;
-	// c_ptr += sizeof(Constraints);
 	c_ptr = Constraints_assignMemory(nC, &((*mem)->auxiliaryConstraints), c_ptr);
 
 	// assign data
@@ -250,27 +248,21 @@ char *QProblem_assignMemory( unsigned int nV, unsigned int nC, QProblem **mem, v
 	c_ptr += sizeof(QProblem);
 
 	(*mem)->ws = (QProblem_ws *) c_ptr;
-	// c_ptr += sizeof(QProblem_ws);
 	c_ptr = QProblem_ws_assignMemory(nV, nC, &((*mem)->ws), c_ptr);
 
 	(*mem)->bounds = (Bounds *) c_ptr;
-	// c_ptr += sizeof(Bounds);
 	c_ptr = Bounds_assignMemory(nV, &((*mem)->bounds), c_ptr);
 
 	(*mem)->constraints = (Constraints *) c_ptr;
-	// c_ptr += sizeof(Constraints);
 	c_ptr = Constraints_assignMemory(nC, &((*mem)->constraints), c_ptr);
 
 	(*mem)->flipper = (Flipper *) c_ptr;
-	// c_ptr += sizeof(Flipper);
 	c_ptr = Flipper_assignMemory(nV, nC, &((*mem)->flipper), c_ptr);
 
 	(*mem)->H = (DenseMatrix *) c_ptr;
-	// c_ptr += sizeof(DenseMatrix);
 	c_ptr = DenseMatrix_assignMemory(nV, nV, &((*mem)->H), c_ptr);
 
 	(*mem)->A = (DenseMatrix *) c_ptr;
-	// c_ptr += sizeof(DenseMatrix);
 	c_ptr = DenseMatrix_assignMemory(nC, nV, &((*mem)->A), c_ptr);
 
 	// align memory to typical cache line size
