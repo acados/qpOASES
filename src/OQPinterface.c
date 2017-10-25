@@ -158,16 +158,20 @@ OQPbenchmarkB_ws *OQPbenchmarkB_ws_createMemory( unsigned int nV )
 int OQPinterface_ws_calculateMemorySize( unsigned int nV, unsigned int nC, unsigned int nQP  )
 {
 	int size = 0;
-	size += sizeof(OQPinterface_ws);					  // structure itself
-	size += OQPbenchmark_ws_calculateMemorySize(nV, nC);  // qp_ws
-	size += OQPbenchmarkB_ws_calculateMemorySize(nV);     // qpB_ws
-	size += (nV * nV) * sizeof(real_t);					  // H
-	size += (nQP * nV) * sizeof(real_t);				  // g
-	size += (nC * nV) * sizeof(real_t);					  // A
-	size += (nQP * nV) * sizeof(real_t);				  // lb
-	size += (nQP * nV) * sizeof(real_t);				  // ub
-	size += (nQP * nC) * sizeof(real_t);				  // lbA
-	size += (nQP * nC) * sizeof(real_t);				  // ubA
+	size += sizeof(OQPinterface_ws);					  	  // structure itself
+
+	if (nC > 0)
+		size += OQPbenchmark_ws_calculateMemorySize(nV, nC);  // qp_ws
+	else
+		size += OQPbenchmarkB_ws_calculateMemorySize(nV);     // qpB_ws
+
+	size += (nV * nV) * sizeof(real_t);					  	  // H
+	size += (nQP * nV) * sizeof(real_t);				  	  // g
+	size += (nC * nV) * sizeof(real_t);					  	  // A
+	size += (nQP * nV) * sizeof(real_t);				  	  // lb
+	size += (nQP * nV) * sizeof(real_t);				  	  // ub
+	size += (nQP * nC) * sizeof(real_t);				  	  // lbA
+	size += (nQP * nC) * sizeof(real_t);				  	  // ubA
 
 	size = (size + 63) / 64 * 64;  // make multiple of typical cache line size
 	size += 1 * 64;                // align once to typical cache line size
@@ -184,11 +188,13 @@ char *OQPinterface_ws_assignMemory( unsigned int nV, unsigned int nC, unsigned i
 	*mem = (OQPinterface_ws *) c_ptr;
 	c_ptr += sizeof(OQPinterface_ws);
 
-	(*mem)->qp_ws = (OQPbenchmark_ws *) c_ptr;
-	c_ptr = OQPbenchmark_ws_assignMemory(nV, nC, &((*mem)->qp_ws), c_ptr);
-
-	(*mem)->qpB_ws = (OQPbenchmarkB_ws *) c_ptr;
-	c_ptr = OQPbenchmarkB_ws_assignMemory(nV, &((*mem)->qpB_ws), c_ptr);
+	if (nC > 0) {
+		(*mem)->qp_ws = (OQPbenchmark_ws *) c_ptr;
+		c_ptr = OQPbenchmark_ws_assignMemory(nV, nC, &((*mem)->qp_ws), c_ptr);
+	} else {
+		(*mem)->qpB_ws = (OQPbenchmarkB_ws *) c_ptr;
+		c_ptr = OQPbenchmarkB_ws_assignMemory(nV, &((*mem)->qpB_ws), c_ptr);
+	}
 
 	// align memory to typical cache line size
     size_t s_ptr = (size_t)c_ptr;

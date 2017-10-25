@@ -34,7 +34,7 @@
 /** Try to solve a list of or all OQP examples in testing/problems */
 int main(int argc, char *argv[])
 {
-	const real_t TOL = 1e-5;
+	const real_t TOL = 2e-5;
 	int nQP=0, nV=0, nC=0, nEC=0;
 
 	/* 1) Define benchmark arguments. */
@@ -82,8 +82,8 @@ int main(int argc, char *argv[])
 	}
 
 	/* 3) Run benchmark. */
-	printf("%10s %9s %9s %9s %6s  %-12s\n", "problem", "stat",
-			"feas", "compl", "nWSR", "result");
+	printf("%10s %9s %9s %9s %6s  %-10s %6s %6s %6s %6s %6s %10s\n", "problem", "stat",
+			"feas", "compl", "nWSR", "result", "nV", "nC", "nEC", "nQP", "CPU time [ms]", "memory");
 	for (i = 0; i < nproblems; i++)
 	{
 		if (scannedDir)
@@ -111,6 +111,7 @@ int main(int argc, char *argv[])
 		if ( readOQPdimensions( OQPproblem, &nQP,&nV,&nC,&nEC ) != SUCCESSFUL_RETURN )
 			return THROWERROR( RET_UNABLE_TO_READ_FILE );
 
+		int memory_size = OQPinterface_ws_calculateMemorySize(nV, nC, nQP);
 		OQPinterface_ws *benchmark_ws = OQPinterface_ws_createMemory(nV, nC, nQP);
 
 		returnvalue = runOQPbenchmark(	OQPproblem,
@@ -133,8 +134,9 @@ int main(int argc, char *argv[])
 			nfail++;
 			snprintf (resstr, 199, "fail (%d)", returnvalue);
 		}
-		fprintf(stdout, "%9.2e %9.2e %9.2e %6d  %-12s\n", maxStationarity,
-				maxFeasibility, maxComplementarity, (int)maxNWSR, resstr);
+		fprintf(stdout, "%9.2e %9.2e %9.2e %6d  %-10s %6d %6d %6d %6d  %8.4f  %13d\n", maxStationarity,
+				maxFeasibility, maxComplementarity, (int)maxNWSR, resstr, nV, nC,
+				nEC, nQP, avgCPUtime*1e3, memory_size);
 
 		if (scannedDir) free(namelist[i]);
 
