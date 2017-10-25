@@ -138,6 +138,8 @@ int QProblemB_calculateMemorySize( unsigned int nV )
 
 	size = (size + 63) / 64 * 64;  // make multiple of typical cache line size
 	size += 1 * 64;                // align once to typical cache line size
+
+	return size;
 }
 
 char *QProblemB_assignMemory( unsigned int nV, QProblemB **mem, void *raw_memory )
