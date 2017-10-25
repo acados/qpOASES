@@ -87,6 +87,8 @@ int main( )
 	printf("KKT violations:\n\n");
 	printf("stat = %e, feas = %e, cmpl = %e\n\n", stat, feas, cmpl);
 
+	free(example);
+
 	return 0;
 }
 
