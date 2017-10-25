@@ -127,6 +127,3 @@ if(QPOASES_BUILD_EXAMPLES)
         target_link_libraries(${ELEMENT} qpOASES_e)
     endforeach()
 endif()
-
-add_executable(test_bench testing/c/test_bench.c)
-target_link_libraries(test_bench qpOASES_e)
