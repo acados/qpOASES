@@ -239,6 +239,8 @@ void QProblemBCON(	QProblemB* _THIS,
 	for( i=0; i<_nV; ++i ) _THIS->x[i] = 0.0;
 	for( i=0; i<_nV; ++i ) _THIS->y[i] = 0.0;
 
+	FlipperCON(_THIS->flipper,_nV,0);
+
 	Bounds_init( _THIS->bounds,_nV );
 
 	_THIS->haveCholesky = BT_FALSE;
