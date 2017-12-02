@@ -239,6 +239,29 @@ returnValue DenseMatrix_times(	DenseMatrix* _THIS,
 								int xN, real_t alpha, const real_t *x, int xLD, real_t beta, real_t *y, int yLD
 								)
 {
+#ifdef EXTERNAL_BLAS
+
+//	printf("\ngemm_tn %d %d %d\n", _THIS->nRows, xN, _THIS->nCols);
+	int _xN     = xN;
+	int _nRows  = (_THIS->nRows);
+	int _nCols  = (_THIS->nCols);
+	int _leaDim = qpOASES_getMax(1,_THIS->nCols);
+	int _xLD    = qpOASES_getMax(1,xLD);
+	int _yLD    = qpOASES_getMax(1,yLD);
+	char c_n = 'n';
+	char c_t = 't';
+	int i_1 = 1;
+
+	if(_xN==1)
+	{
+		GEMV(&c_t, &_nCols, &_nRows, &alpha, _THIS->val, &_leaDim, x, &i_1, &beta, y, &i_1);
+	}
+	else
+	{
+		GEMM(&c_t, &c_n, &_nRows, &_xN, &_nCols, &alpha, _THIS->val, &_leaDim, x, &_xLD, &beta, y, &_yLD);
+	}
+#else
+
 	unsigned long _xN     = (unsigned long)xN;
 	unsigned long _nRows  = (unsigned long)(_THIS->nRows);
 	unsigned long _nCols  = (unsigned long)(_THIS->nCols);
@@ -248,6 +271,7 @@ returnValue DenseMatrix_times(	DenseMatrix* _THIS,
 
 	/* Call BLAS. Mind row major format! */
 	GEMM("TRANS", "NOTRANS", &_nRows, &_xN, &_nCols, &alpha, _THIS->val, &_leaDim, x, &_xLD, &beta, y, &_yLD);
+#endif
 	return SUCCESSFUL_RETURN;
 }
 
@@ -256,6 +280,30 @@ returnValue DenseMatrix_transTimes(	DenseMatrix* _THIS,
 									int xN, real_t alpha, const real_t *x, int xLD, real_t beta, real_t *y, int yLD
 									)
 {
+#ifdef EXTERNAL_BLAS
+
+//	printf("\ngemm_nn %d %d %d\n", _THIS->nRows, xN, _THIS->nCols);
+	int _xN     = xN;
+	int _nRows  = (_THIS->nRows);
+	int _nCols  = (_THIS->nCols);
+	int _leaDim = qpOASES_getMax(1,_THIS->nCols);
+	int _xLD    = qpOASES_getMax(1,xLD);
+	int _yLD    = qpOASES_getMax(1,yLD);
+	char c_n = 'n';
+	char c_t = 't';
+	int i_1 = 1;
+
+	if(_xN==1)
+	{
+		GEMV(&c_n, &_nCols, &_nRows, &alpha, _THIS->val, &_leaDim, x, &i_1, &beta, y, &i_1);
+	}
+	else
+	{
+		GEMM(&c_n, &c_n, &_nCols, &_xN, &_nRows, &alpha, _THIS->val, &_leaDim, x, &_xLD, &beta, y, &_yLD);
+	}
+
+#else
+
 	unsigned long _xN     = (unsigned long)xN;
 	unsigned long _nRows  = (unsigned long)(_THIS->nRows);
 	unsigned long _nCols  = (unsigned long)(_THIS->nCols);
@@ -265,6 +313,7 @@ returnValue DenseMatrix_transTimes(	DenseMatrix* _THIS,
 
 	/* Call BLAS. Mind row major format! */
 	GEMM("NOTRANS", "NOTRANS", &_nCols, &_xN, &_nRows, &alpha, _THIS->val, &_leaDim, x, &_xLD, &beta, y, &_yLD);
+#endif
 	return SUCCESSFUL_RETURN;
 }
 
@@ -570,6 +619,8 @@ returnValue DenseMatrix_bilinear(	DenseMatrix* _THIS,
 }
 
 
+#ifdef EXTERNAL_BLAS
+#else
 void dgemm_(	const char *TRANSA, const char *TRANSB,
 				const unsigned long *M, const unsigned long *N, const unsigned long *K,
 				const double *ALPHA, const double *A, const unsigned long *LDA, const double *B, const unsigned long *LDB,
@@ -624,7 +675,10 @@ void dgemm_(	const char *TRANSA, const char *TRANSB,
 					for (i = 0; i < *K; i++)
 						C[j+(*LDC)*k] += *ALPHA * A[i+(*LDA)*j] * B[i+(*LDB)*k];
 }
+#endif
 
+#ifdef EXTERNAL_BLAS
+#else
 void sgemm_(	const char *TRANSA, const char *TRANSB,
 				const unsigned long *M, const unsigned long *N, const unsigned long *K,
 				const float *ALPHA, const float *A, const unsigned long *LDA, const float *B, const unsigned long *LDB,
@@ -679,9 +733,12 @@ void sgemm_(	const char *TRANSA, const char *TRANSB,
 					for (i = 0; i < *K; i++)
 						C[j+(*LDC)*k] += *ALPHA * A[i+(*LDA)*j] * B[i+(*LDB)*k];
 }
+#endif
 
 
 
+#ifdef EXTERNAL_BLAS
+#else
 void dpotrf_(	const char *uplo, const unsigned long *_n, double *a,
 				const unsigned long *_lda, long *info
 				)
@@ -722,8 +779,11 @@ void dpotrf_(	const char *uplo, const unsigned long *_n, double *a,
 	if (info != 0)
 		*info = 0;
 }
+#endif
 
 
+#ifdef EXTERNAL_BLAS
+#else
 void spotrf_(	const char *uplo, const unsigned long *_n, float *a,
 				const unsigned long *_lda, long *info
 				)
@@ -764,6 +824,7 @@ void spotrf_(	const char *uplo, const unsigned long *_n, float *a,
 	if (info != 0)
 		*info = 0;
 }
+#endif
 
 
 END_NAMESPACE_QPOASES

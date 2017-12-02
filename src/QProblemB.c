@@ -1531,7 +1531,12 @@ returnValue QProblemB_computeCholesky( QProblemB* _THIS )
 					DenseMatrix_getCol(_THIS->H,FR_idx[j], Bounds_getFree( _THIS->bounds ), 1.0, &(_THIS->R[j*nV]));
 
 				/* R'*R = H */
+#ifdef EXTERNAL_BLAS
+				char c_u = 'u';
+				POTRF( &c_u, &_nFR, _THIS->R, &_nV, &info );
+#else
 				POTRF( "U", &_nFR, _THIS->R, &_nV, &info );
+#endif
 
 				/* <0 = invalid call, =0 ok, >0 not spd */
 				if (info > 0) {

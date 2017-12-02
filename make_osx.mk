@@ -75,11 +75,15 @@ else
 endif
 
 CFLAGS = -w -O3 -finline-functions -fPIC -DLINUX -D__SUPPRESSANYOUTPUT__ -D__NO_STATIC__ #-Wall -pedantic -Wshadow 
+#CFLAGS += -mavx -DEXTERNAL_BLAS #-DMKL_DIRECT_CALL_SEQ
+#CFLAGS += -pg
 #          -g -D__DEBUG__ -D__NO_COPYRIGHT__ -D__SUPPRESSANYOUTPUT__ -D__USE_SINGLE_PRECISION__
 
 # libraries to link against when building qpOASES_e .so files
 LINK_LIBRARIES = -lm
-
+#LINK_LIBRARIES = -L/opt/openblas/lib/ -lopenblas -lgfortran -lm
+#LINK_LIBRARIES = -L/opt/netlib/ -llapack -lblas -lgfortran -lm
+#LINK_LIBRARIES = -Wl,--start-group /opt/intel/mkl/lib/intel64/libmkl_gf_lp64.a /opt/intel/mkl/lib/intel64/libmkl_core.a /opt/intel/mkl/lib/intel64/libmkl_sequential.a -Wl,--end-group -ldl -lpthread -lm 
 ifeq ($(MAKE_STATIC_LIB), 1)
 	# how to link against the qpOASES static library
 	QPOASES_LINK = -L${BINDIR} -lqpOASES_e

@@ -39,29 +39,35 @@
 
 #ifdef __USE_SINGLE_PRECISION__
 
-	/** Macro for calling level 3 BLAS operation in single precision. */
+	// single precision
 	#define GEMM sgemm_
-	/** Macro for calling level 3 BLAS operation in single precision. */
-	#define SYR ssyr_
-	/** Macro for calling level 3 BLAS operation in single precision. */
-	#define SYR2 ssyr2_
-	/** Macro for calling level 3 BLAS operation in single precision. */
+	#define GEMV sgemv_
+//	#define SYR ssyr_
+//	#define SYR2 ssyr2_
 	#define POTRF spotrf_
 
 #else
 
-	/** Macro for calling level 3 BLAS operation in double precision. */
+	// double precision
 	#define GEMM dgemm_
-	/** Macro for calling level 3 BLAS operation in double precision. */
-	#define SYR  dsyr_
-	/** Macro for calling level 3 BLAS operation in double precision. */
-	#define SYR2 dsyr2_
-	/** Macro for calling level 3 BLAS operation in double precision. */
+	#define GEMV dgemv_
+//	#define SYR  dsyr_
+//	#define SYR2 dsyr2_
 	#define POTRF dpotrf_
 
 #endif /* __USE_SINGLE_PRECISION__ */
 
 
+#ifdef EXTERNAL_BLAS
+	// double precision
+	void dgemm_(char *ta, char *tb, int *m, int *n, int *k, double *alpha, double *A, int *lda, double *B, int ldb, double *beta, double *C, int *ldc);
+	void dgemv_(char *ta, int *m, int *n, double *alpha, double *A, int *lda, double *x, int *incx, double *beta, double *y, int *incy);
+	void dpotrf_(char *uplo, int *m, double *A, int *lda, int *info);
+	// single precision
+	void sgemm_(char *ta, char *tb, int *m, int *n, int *k, float *alpha, float *A, int *lda, float *B, int ldb, float *beta, float *C, int *ldc);
+	void sgemv_(char *ta, int *m, int *n, float *alpha, float *A, int *lda, float *x, int *incx, float *beta, float *y, int *incy);
+	void spotrf_(char *uplo, int *m, float *A, int *lda, int *info);
+#else
 	/** Performs one of the matrix-matrix operation in double precision. */
 	void dgemm_ ( const char*, const char*, const unsigned long*, const unsigned long*, const unsigned long*,
 			const double*, const double*, const unsigned long*, const double*, const unsigned long*,
@@ -71,24 +77,26 @@
 			const float*, const float*, const unsigned long*, const float*, const unsigned long*,
 			const float*, float*, const unsigned long* );
 
-	/** Performs a symmetric rank 1 operation in double precision. */
-	void dsyr_ ( const char *, const unsigned long *, const double *, const double *,
-				 const unsigned long *, double *, const unsigned long *);
-	/** Performs a symmetric rank 1 operation in single precision. */
-	void ssyr_ ( const char *, const unsigned long *, const float *, const float *,
-				 const unsigned long *, float *, const unsigned long *);
-
-	/** Performs a symmetric rank 2 operation in double precision. */
-	void dsyr2_ ( const char *, const unsigned long *, const double *, const double *,
-				  const unsigned long *, const double *, const unsigned long *, double *, const unsigned long *);
-	/** Performs a symmetric rank 2 operation in single precision. */
-	void ssyr2_ ( const char *, const unsigned long *, const float *, const float *,
-				  const unsigned long *, const float *, const unsigned long *, float *, const unsigned long *);
-
 	/** Calculates the Cholesky factorization of a real symmetric positive definite matrix in double precision. */
 	void dpotrf_ ( const char *, const unsigned long *, double *, const unsigned long *, long * );
 	/** Calculates the Cholesky factorization of a real symmetric positive definite matrix in single precision. */
 	void spotrf_ ( const char *, const unsigned long *, float *, const unsigned long *, long * );
+
+#endif
+
+	/** Performs a symmetric rank 1 operation in double precision. */
+//	void dsyr_ ( const char *, const unsigned long *, const double *, const double *,
+//				 const unsigned long *, double *, const unsigned long *);
+	/** Performs a symmetric rank 1 operation in single precision. */
+//	void ssyr_ ( const char *, const unsigned long *, const float *, const float *,
+//				 const unsigned long *, float *, const unsigned long *);
+
+	/** Performs a symmetric rank 2 operation in double precision. */
+//	void dsyr2_ ( const char *, const unsigned long *, const double *, const double *,
+//				  const unsigned long *, const double *, const unsigned long *, double *, const unsigned long *);
+	/** Performs a symmetric rank 2 operation in single precision. */
+//	void ssyr2_ ( const char *, const unsigned long *, const float *, const float *,
+//				  const unsigned long *, const float *, const unsigned long *, float *, const unsigned long *);
 
 
 #include <qpOASES_e/Indexlist.h>

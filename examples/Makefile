@@ -54,6 +54,8 @@ all: ${QPOASES_EXES}
 
 ${BINDIR}/%${EXE}: %.${OBJEXT} ${LINK_DEPENDS}
 	@${ECHO} "Creating" $@
+	echo ${QPOASES_LINK}
+	echo ${LINK_LIBRARIES}
 	@${CC} ${DEF_TARGET} ${CFLAGS} $< ${QPOASES_LINK} ${LINK_LIBRARIES}
 
 clean:
