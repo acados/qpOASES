@@ -39,12 +39,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-
-#ifdef __DEBUG__
-	#include <assert.h>
-#else
-	#define assert(ignore)((void) 0);
-#endif
+#include <assert.h>
 
 #include <qpOASES_e/Constants.h>
 
