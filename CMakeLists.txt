@@ -54,7 +54,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 
-option(QPOASES_BUILD_EXAMPLES "Build examples." ON)
+option(QPOASES_BUILD_EXAMPLES "Build examples." OFF)
 
 
 ############################################################
@@ -104,8 +104,6 @@ set_target_properties(
 export(EXPORT qpOASES_eConfig FILE ${PROJECT_BINARY_DIR}/qpOASES_eConfig.cmake)
 
 # headers
-install(FILES include/qpOASES_e.h
-  DESTINATION include)
 install(DIRECTORY include/qpOASES_e
   DESTINATION include
   FILES_MATCHING PATTERN "*.h"
