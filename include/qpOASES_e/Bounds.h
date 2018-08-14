@@ -80,7 +80,9 @@ int Bounds_calculateMemorySize( int n);
 
 char *Bounds_assignMemory(int n, Bounds **mem, void *raw_memory);
 
+#ifndef __DSPACE__
 Bounds *Bounds_createMemory( int n );
+#endif
 
 /** Constructor which takes the number of bounds. */
 void BoundsCON(	Bounds* _THIS,

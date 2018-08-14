@@ -82,6 +82,7 @@ char *Indexlist_assignMemory(int n, Indexlist **mem, void *raw_memory)
 	return c_ptr;
 }
 
+#ifndef __DSPACE__
 Indexlist *Indexlist_createMemory( int n )
 {
 	Indexlist *mem;
@@ -91,6 +92,7 @@ Indexlist *Indexlist_createMemory( int n )
     assert((char*)raw_memory_ptr + memory_size >= ptr_end); (void) ptr_end;
     return mem;
 }
+#endif
 
 /*
  *	I n d e x l i s t

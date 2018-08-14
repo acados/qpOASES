@@ -126,7 +126,9 @@ int DenseMatrix_calculateMemorySize( int m, int n );
 
 char *DenseMatrix_assignMemory( int m, int n, DenseMatrix **mem, void *raw_memory );
 
+#ifndef __DSPACE__
 DenseMatrix *DenseMatrix_createMemory( int m, int n );
+#endif
 
 /** Constructor from vector of values.
  *  Caution: Data pointer must be valid throughout lifetime

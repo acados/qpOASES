@@ -195,6 +195,7 @@ char *QProblem_ws_assignMemory( unsigned int nV, unsigned int nC, QProblem_ws **
 	return c_ptr;
 }
 
+#ifndef __DSPACE__
 QProblem_ws *QProblem_ws_createMemory( unsigned int nV, unsigned int nC )
 {
 	QProblem_ws *mem;
@@ -204,6 +205,7 @@ QProblem_ws *QProblem_ws_createMemory( unsigned int nV, unsigned int nC )
     assert((char*)raw_memory_ptr + memory_size >= ptr_end); (void) ptr_end;
     return mem;
 }
+#endif
 
 int QProblem_calculateMemorySize( unsigned int nV, unsigned int nC )
 {
@@ -334,6 +336,7 @@ char *QProblem_assignMemory( unsigned int nV, unsigned int nC, QProblem **mem, v
 	return c_ptr;
 }
 
+#ifndef __DSPACE__
 QProblem *QProblem_createMemory( unsigned int nV, unsigned int nC )
 {
 	QProblem *mem;
@@ -343,6 +346,7 @@ QProblem *QProblem_createMemory( unsigned int nV, unsigned int nC )
     assert((char*)raw_memory_ptr + memory_size >= ptr_end); (void) ptr_end;
     return mem;
 }
+#endif
 
 /*
  *	Q P r o b l e m

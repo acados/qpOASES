@@ -68,7 +68,9 @@ int Indexlist_calculateMemorySize( int n);
 
 char *Indexlist_assignMemory(int n, Indexlist **mem, void *raw_memory);
 
+#ifndef __DSPACE__
 Indexlist *Indexlist_createMemory( int n );
+#endif
 
 /** Constructor which takes the desired physical length of the index list. */
 void IndexlistCON(	Indexlist* _THIS,

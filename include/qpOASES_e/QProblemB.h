@@ -147,8 +147,9 @@ int QProblemB_calculateMemorySize( unsigned int nV );
 
 char *QProblemB_assignMemory( unsigned int nV, QProblemB **mem, void *raw_memory );
 
+#ifndef __DSPACE__
 QProblemB *QProblemB_createMemory( unsigned int nV );
-
+#endif
 
 /** Constructor which takes the QP dimension and Hessian type
  *  information. If the Hessian is the zero (i.e. HST_ZERO) or the

@@ -95,6 +95,7 @@ char *Flipper_assignMemory( unsigned int nV, unsigned int nC, Flipper **mem, voi
 	return c_ptr;
 }
 
+#ifndef __DSPACE__
 Flipper *Flipper_createMemory( unsigned int nV, unsigned int nC )
 {
 	Flipper *mem;
@@ -104,6 +105,7 @@ Flipper *Flipper_createMemory( unsigned int nV, unsigned int nC )
     assert((char*)raw_memory_ptr + memory_size >= ptr_end); (void) ptr_end;
     return mem;
 }
+#endif
 
  /*
  *	F l i p p e r

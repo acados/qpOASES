@@ -80,7 +80,9 @@ int Constraints_calculateMemorySize( int n);
 
 char *Constraints_assignMemory(int n, Constraints **mem, void *raw_memory);
 
+#ifndef __DSPACE__
 Constraints *Constraints_createMemory( int n );
+#endif
 
 /** Constructor which takes the number of constraints. */
 void ConstraintsCON(	Constraints* _THIS,

@@ -108,6 +108,7 @@ char *Constraints_assignMemory(int n, Constraints **mem, void *raw_memory)
 	return c_ptr;
 }
 
+#ifndef __DSPACE__
 Constraints *Constraints_createMemory( int n )
 {
 	Constraints *mem;
@@ -117,6 +118,7 @@ Constraints *Constraints_createMemory( int n )
     assert((char*)raw_memory_ptr + memory_size >= ptr_end); (void) ptr_end;
     return mem;
 }
+#endif
 
 /*
  *	C o n s t r a i n t s

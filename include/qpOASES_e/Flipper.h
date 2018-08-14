@@ -71,7 +71,9 @@ int Flipper_calculateMemorySize( unsigned int nV, unsigned int nC );
 
 char *Flipper_assignMemory( unsigned int nV, unsigned int nC, Flipper **mem, void *raw_memory );
 
+#ifndef __DSPACE__
 Flipper *Flipper_createMemory( unsigned int nV, unsigned int nC );
+#endif
 
 /** Constructor which takes the number of bounds and constraints. */
 void FlipperCON(	Flipper* _THIS,

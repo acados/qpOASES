@@ -108,6 +108,7 @@ char *Bounds_assignMemory(int n, Bounds **mem, void *raw_memory)
 	return c_ptr;
 }
 
+#ifndef __DSPACE__
 Bounds *Bounds_createMemory( int n )
 {
 	Bounds *mem;
@@ -117,6 +118,7 @@ Bounds *Bounds_createMemory( int n )
     assert((char*)raw_memory_ptr + memory_size >= ptr_end); (void) ptr_end;
     return mem;
 }
+#endif
 
 /*
  *	B o u n d s

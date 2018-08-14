@@ -90,6 +90,7 @@ char *OQPbenchmark_ws_assignMemory( unsigned int nV, unsigned int nC, OQPbenchma
 	return c_ptr;
 }
 
+#ifndef __DSPACE__
 OQPbenchmark_ws *OQPbenchmark_ws_createMemory( unsigned int nV, unsigned int nC )
 {
 	OQPbenchmark_ws *mem;
@@ -99,6 +100,7 @@ OQPbenchmark_ws *OQPbenchmark_ws_createMemory( unsigned int nV, unsigned int nC 
     assert((char*)raw_memory_ptr + memory_size >= ptr_end); (void) ptr_end;
     return mem;
 }
+#endif
 
 int OQPbenchmarkB_ws_calculateMemorySize( unsigned int nV )
 {
@@ -145,6 +147,7 @@ char *OQPbenchmarkB_ws_assignMemory( unsigned int nV, OQPbenchmarkB_ws **mem, vo
 	return c_ptr;
 }
 
+#ifndef __DSPACE__
 OQPbenchmarkB_ws *OQPbenchmarkB_ws_createMemory( unsigned int nV )
 {
 	OQPbenchmarkB_ws *mem;
@@ -154,6 +157,7 @@ OQPbenchmarkB_ws *OQPbenchmarkB_ws_createMemory( unsigned int nV )
     assert((char*)raw_memory_ptr + memory_size >= ptr_end); (void) ptr_end;
     return mem;
 }
+#endif
 
 int OQPinterface_ws_calculateMemorySize( unsigned int nV, unsigned int nC, unsigned int nQP  )
 {
@@ -226,6 +230,7 @@ char *OQPinterface_ws_assignMemory( unsigned int nV, unsigned int nC, unsigned i
 	return c_ptr;
 }
 
+#ifndef __DSPACE__
 OQPinterface_ws *OQPinterface_ws_createMemory( unsigned int nV, unsigned int nC, unsigned int nQP )
 {
 	OQPinterface_ws *mem;
@@ -235,6 +240,7 @@ OQPinterface_ws *OQPinterface_ws_createMemory( unsigned int nV, unsigned int nC,
     assert((char*)raw_memory_ptr + memory_size >= ptr_end); (void) ptr_end;
     return mem;
 }
+#endif
 
 /*
  *	r e a d O Q P d i m e n s i o n s

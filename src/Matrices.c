@@ -76,6 +76,7 @@ char *DenseMatrix_assignMemory( int m, int n, DenseMatrix **mem, void *raw_memor
 	return c_ptr;
 }
 
+#ifndef __DSPACE__
 DenseMatrix *DenseMatrix_createMemory( int m, int n )
 {
 	DenseMatrix *mem;
@@ -85,6 +86,7 @@ DenseMatrix *DenseMatrix_createMemory( int m, int n )
     assert((char*)raw_memory_ptr + memory_size >= ptr_end); (void) ptr_end;
     return mem;
 }
+#endif
 
 void DenseMatrixCON(	DenseMatrix* _THIS,
 						int m,

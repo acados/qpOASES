@@ -166,7 +166,9 @@ int QProblem_ws_calculateMemorySize( unsigned int nV, unsigned int nC );
 
 char *QProblem_ws_assignMemory( unsigned int nV, unsigned int nC, QProblem_ws **mem, void *raw_memory );
 
+#ifndef __DSPACE__
 QProblem_ws *QProblem_ws_createMemory( unsigned int nV, unsigned int nC );
+#endif
 
 /**
  *	\brief Implements the online active set strategy for QPs with general constraints.
