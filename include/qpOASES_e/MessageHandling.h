@@ -40,6 +40,7 @@
 #include <string.h>
 #include <math.h>
 #include <assert.h>
+#include <stdlib.h>
 
 #include <qpOASES_e/Constants.h>
 
