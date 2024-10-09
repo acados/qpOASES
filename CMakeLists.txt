@@ -97,10 +97,10 @@ install(TARGETS qpOASES_e EXPORT qpOASES_eConfig
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION lib)
 install(EXPORT qpOASES_eConfig DESTINATION cmake)
-set_target_properties(
-    qpOASES_e
-    PROPERTIES
-    SOVERSION ${PACKAGE_SO_VERSION})
+# set_target_properties(
+#     qpOASES_e
+#     PROPERTIES
+#     SOVERSION ${PACKAGE_SO_VERSION})
 export(EXPORT qpOASES_eConfig FILE ${PROJECT_BINARY_DIR}/qpOASES_eConfig.cmake)
 
 # headers
