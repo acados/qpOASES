@@ -29,7 +29,8 @@
 ##     Date:      2007-2017
 ##
 
-cmake_minimum_required(VERSION 2.6)
+# cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.5)  # requiring something older leads to issues with newer CMake versions.
 
 project(qpOASES C)
 set(PACKAGE_NAME "qpOASES")
