@@ -430,7 +430,7 @@ void QProblemCON(	QProblem* _THIS,
 /*
  *	c o p y
  */
-void QProblemCPY(	QProblem *FROM,
+void QProblemCPY(	QProblem* FROM,
 					QProblem* TO
 					)
 {
