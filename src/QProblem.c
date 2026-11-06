@@ -469,7 +469,7 @@ void QProblemCPY(	QProblem* FROM,
 	OptionsCPY( &(FROM->options),&(TO->options) );
 	QProblem_setPrintLevel( TO,TO->options.printLevel );
 
-	ConstraintsCPY( &(FROM->constraints),&(TO->constraints) );
+	ConstraintsCPY( FROM->constraints,TO->constraints );
 
 	DenseMatrixCPY(FROM->A, TO->A);
 
